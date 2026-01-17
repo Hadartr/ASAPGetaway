@@ -1,4 +1,16 @@
-.bin/
-.obj/
+# תיקיות שנוצרות בזמן הרצה (Build)
+bin/
+obj/
+
+# קבצי הגדרות של Visual Studio / VS Code
 .vs/
+.vscode/
 *.user
+*.userosscache
+
+# קבצי הגדרות מקומיים (מכילים סיסמאות או מחרוזות חיבור למסד נתונים)
+appsettings.Development.json
+
+# קבצי מערכת
+.DS_Store
+Thumbs.db
