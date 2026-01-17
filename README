@@ -1,0 +1,210 @@
+# ASAPGetaway - Travel Booking System
+
+ASP.NET Core MVC web application for browsing and booking travel packages worldwide.
+
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-8.0-blue)
+![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-red)
+
+---
+
+## Quick Start
+
+### Prerequisites
+- .NET 8.0 SDK
+- SQL Server 2019+
+- SQL Server Management Studio (SSMS)
+- Visual Studio 2022
+
+### Installation
+
+1. **Clone & Build**
+```bash
+git clone https://github.com/yourusername/ASAPGetaway.git
+cd ASAPGetaway
+dotnet restore
+dotnet build
+```
+
+2. **Configure Database**  
+Edit `appsettings.json`:
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ASAPGetawayDB;Trusted_Connection=True;"
+  }
+}
+```
+
+3. **Create Database**
+```bash
+dotnet ef database update
+```
+
+4. **Seed Data**  
+Open SSMS and run `CompleteReset_Professional.sql`
+
+5. **Run**
+```bash
+dotnet run
+```
+
+Navigate to `https://localhost:7001`
+
+---
+
+## Features
+
+### User Features
+- Browse & search 25+ worldwide destinations
+- Shopping cart & secure booking
+- Wish list & waiting list (FIFO)
+- Trip reviews & ratings
+- Email notifications & PDF invoices
+
+### Admin Features
+- Full trip management (CRUD)
+- Time-limited discount system (max 7 days)
+- User account management
+- Waiting list management
+- Site reviews monitoring
+
+---
+
+## Default Accounts
+
+**Admin:**
+```
+Email: admin@asapgetaway.com
+Password: Admin123!
+```
+
+**Demo Users:**
+```
+HadarTr@email.com
+OriOh@email.com
+Alona@email.com
+Pedut@email.com
+```
+*Demo users have placeholder passwords - use admin account or register new users*
+
+---
+
+## Project Structure
+
+```
+ASAPGetaway/
+├── Controllers/       # MVC Controllers
+├── Models/           # Data models with validation
+├── DAL/              # Data Access Layer (ADO.NET)
+├── Services/         # Email & background services
+├── Views/            # Razor views
+├── wwwroot/          # Static files
+└── Areas/Identity/   # Authentication
+```
+
+---
+
+## Database Schema
+
+**Main Tables:**
+- **Trips** - Packages with pricing, discounts, capacity
+- **Bookings** - User reservations with status
+- **Reviews** - Trip ratings (1-5 stars)
+- **SiteReviews** - General feedback
+- **WaitingList** - FIFO queue for sold-out trips
+- **WishList** - Saved trips
+- **AspNetUsers** - Identity accounts
+
+---
+
+## Key Features
+
+### Discount System
+- Max 7-day discount periods
+- Automatic price calculation
+- Visual indicators
+
+### Waiting List (FIFO)
+- First In, First Out queue
+- Email notifications when spots open
+- Admin management panel
+
+### Admin Panel
+- Trip management
+- User management (lock/unlock)
+- Waiting list management
+- Site reviews
+
+---
+
+## Git Setup
+
+```bash
+# Initialize
+git init
+git add .
+git commit -m "Initial commit"
+
+# Push to GitHub
+git remote add origin https://github.com/yourusername/ASAPGetaway.git
+git branch -M main
+git push -u origin main
+```
+
+`.gitignore` is included in project root.
+
+---
+
+## Troubleshooting
+
+**Database connection issues:**
+```bash
+dotnet ef database update
+```
+
+**Reset database:**
+```sql
+-- In SSMS, run: CreateDatabasel.sql
+```
+
+**Port conflict:**  
+Edit `Properties/launchSettings.json` and change ports
+
+---
+
+## Technologies
+
+- ASP.NET Core MVC 8.0
+- C# 12
+- SQL Server (ADO.NET)
+- ASP.NET Core Identity
+- Bootstrap 5 & jQuery
+- QuestPDF (invoices)
+- MailKit (emails)
+
+---
+
+## Authors
+
+**Hadar & Ori**  
+Computer Communications & Networks Course  
+2025-2026
+
+---
+
+## Quick Reference
+
+```bash
+# Run application
+dotnet run
+
+# Reset database
+# Run CompleteReset_Professional.sql in SSMS
+
+# Admin login
+admin@asapgetaway.com / Admin123!
+```
+
+---
+
+**Happy Traveling! ✈️🌍**
