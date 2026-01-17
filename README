@@ -41,7 +41,7 @@ dotnet ef database update
 ```
 
 4. **Seed Data**  
-Open SSMS and run `CompleteReset_Professional.sql`
+Open SSMS and run `ASAPGetawayDB.sql`
 
 5. **Run**
 ```bash
@@ -134,24 +134,6 @@ ASAPGetaway/
 - User management (lock/unlock)
 - Waiting list management
 - Site reviews
-
----
-
-## Git Setup
-
-```bash
-# Initialize
-git init
-git add .
-git commit -m "Initial commit"
-
-# Push to GitHub
-git remote add origin https://github.com/yourusername/ASAPGetaway.git
-git branch -M main
-git push -u origin main
-```
-
-`.gitignore` is included in project root.
 
 ---
 
