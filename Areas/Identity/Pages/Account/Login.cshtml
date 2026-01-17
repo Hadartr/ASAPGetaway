@@ -1,0 +1,179 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<style>
+    /* Full page gradient background */
+    body {
+        background: linear-gradient(135deg, #E0F2FE, #DBEAFE) !important;
+        min-height: 100vh;
+    }
+
+    /* Login form container with modern styling */
+    .identity-container {
+        max-width: 500px;
+        margin: 60px auto;
+        padding: 50px;
+        background: linear-gradient(135deg, #FFFFFF, #F8FAFC);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(96, 165, 250, 0.2);
+        border: 2px solid #BFDBFE;
+    }
+
+    /* Page title styling */
+    .identity-container h1 {
+        color: #1E40AF;
+        text-align: center;
+        margin-bottom: 10px;
+        font-weight: 700;
+        font-size: 2.5em;
+    }
+
+    /* Subtitle styling */
+    .identity-container h3 {
+        color: #64748B;
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 500;
+        font-size: 1.1em;
+    }
+
+    /* Form input fields styling */
+    .identity-container .form-control {
+        padding: 14px 18px;
+        border: 2px solid #E2E8F0;
+        border-radius: 12px;
+        background-color: #F8FAFC;
+        font-size: 1em;
+        transition: all 0.3s ease;
+    }
+
+    /* Input field focus state */
+    .identity-container .form-control:focus {
+        border-color: #93C5FD;
+        box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.2);
+        background-color: white;
+    }
+
+    /* Submit button with gradient */
+    .identity-container .btn-primary {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #60A5FA, #3B82F6);
+        border: none;
+        border-radius: 12px;
+        font-size: 1.2em;
+        font-weight: 700;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .identity-container .btn-primary:hover {
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Validation error messages */
+    .identity-container .text-danger {
+        color: #DC2626;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+
+    /* Validation summary for multiple errors */
+    .identity-container .validation-summary-errors {
+        background: linear-gradient(135deg, #FEE2E2, #FECACA);
+        border-left: 4px solid #EF4444;
+        color: #991B1B;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Links section styling */
+    .links-section {
+        margin-top: 30px;
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #E2E8F0;
+    }
+
+    .links-section p {
+        margin: 10px 0;
+        color: #64748B;
+    }
+
+    .identity-container a {
+        color: #3B82F6;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .identity-container a:hover {
+        color: #1E40AF;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="identity-container">
+    <!-- Page header -->
+    <h1>🔐 @ViewData["Title"]</h1>
+    <h3>Welcome back to ASAPGetaway</h3>
+    
+    <!-- Login form section -->
+    <section>
+        <form id="account" method="post">
+            <!-- Display validation errors if any -->
+            <div asp-validation-summary="ModelOnly" class="text-danger validation-summary-errors" role="alert"></div>
+            
+            <!-- Email input field -->
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Email">Email</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            
+            <!-- Password input field -->
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control" type="password" autocomplete="current-password" aria-required="true" placeholder="password" />
+                <label asp-for="Input.Password">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            
+            <!-- Remember me checkbox -->
+            <div class="checkbox mb-3">
+                <label asp-for="Input.RememberMe" class="form-check-label">
+                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                </label>
+            </div>
+            
+            <!-- Submit button -->
+            <div>
+                <button id="login-submit" type="submit" class="btn btn-primary">Log in</button>
+            </div>
+            
+            <!-- Additional links section -->
+            <div class="links-section">
+                <p>
+                    <a asp-page="./ForgotPassword">Forgot your password?</a>
+                </p>
+                <p>
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                </p>
+                <p>
+                    <a asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                </p>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <!-- Client-side validation scripts -->
+    <partial name="_ValidationScriptsPartial" />
+}

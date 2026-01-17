@@ -1,0 +1,469 @@
+@model List<ASAPGetaway.Models.Trip>
+
+@{
+    bool onSaleOnly = Context.Request.Query["onSaleOnly"] == "true";
+    var countries = Model.Select(t => t.Country).Distinct().OrderBy(c => c).ToList();
+}
+
+<style>
+    .trips-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    .trips-header { text-align: center; margin-bottom: 30px; color: #333; }
+    
+    /* Filter Form - Clean Design */
+    .filter-form { 
+        background: white; 
+        padding: 30px; 
+        border-radius: 16px; 
+        margin-bottom: 40px; 
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .filter-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filter-input, .filter-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 15px;
+        color: #495057;
+        background: #f8f9fa;
+        transition: all 0.2s;
+    }
+
+    .filter-input:focus, .filter-select:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .filter-input::placeholder {
+        color: #adb5bd;
+    }
+
+    .filter-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .checkbox-input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+
+    .checkbox-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #495057;
+        cursor: pointer;
+    }
+
+    .btn-filter {
+        padding: 12px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.35);
+    }
+
+    .btn-filter:active {
+        transform: translateY(0);
+    }
+    
+    /* Autocomplete */
+    .autocomplete-items { 
+        position: absolute; 
+        border: 1px solid #e9ecef; 
+        top: 100%; 
+        left: 0; 
+        right: 0; 
+        max-height: 200px; 
+        overflow-y: auto; 
+        background: white; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        border-radius: 0 0 8px 8px; 
+        z-index: 99; 
+    }
+    .autocomplete-items div { 
+        padding: 12px 16px; 
+        cursor: pointer; 
+        background-color: #fff; 
+        border-bottom: 1px solid #f8f9fa; 
+        transition: background 0.2s;
+    }
+    .autocomplete-items div:hover { 
+        background-color: #f8f9fa; 
+    }
+    
+    .trips-count { text-align: center; font-size: 18px; color: #666; margin-bottom: 20px; }
+    
+    .trips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
+    
+    .trip-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; position: relative; }
+    .trip-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+    
+    .trip-image { width: 100%; height: 220px; object-fit: cover; display: block; }
+    .trip-image-placeholder { width: 100%; height: 220px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; }
+    
+    .trip-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    
+    .sale-badge { position: absolute; top: 15px; right: 15px; background: #ff4757; color: white; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 14px; box-shadow: 0 3px 10px rgba(255, 71, 87, 0.4); z-index: 10; }
+    
+    .trip-title { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 10px; line-height: 1.3; }
+    .trip-destination { display: flex; align-items: center; gap: 8px; color: #666; margin-bottom: 15px; font-size: 15px; }
+    .trip-dates { color: #888; font-size: 14px; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
+    
+    .trip-price { margin-bottom: 20px; }
+    .price-original { text-decoration: line-through; color: #999; font-size: 16px; margin-right: 8px; }
+    .price-current { font-size: 28px; font-weight: 700; color: #28a745; }
+    .price-normal { font-size: 28px; font-weight: 700; color: #333; }
+    
+    .trip-info { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 12px; background: #f8f9fa; border-radius: 8px; font-size: 14px; }
+    .trip-info-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .trip-info-label { color: #888; font-size: 12px; }
+    .trip-info-value { font-weight: 600; color: #333; }
+    
+    .trip-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
+    
+    .btn-icon { 
+        position: relative; 
+        width: 100%; 
+        height: 50px; 
+        padding: 0; 
+        margin: 0; 
+        border: 2px solid #e0e0e0; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        transition: all 0.2s; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 22px; 
+        text-decoration: none; 
+        background: white; 
+        color: #666; 
+    }
+    
+    .btn-icon::after { 
+        content: attr(data-tooltip); 
+        position: absolute; 
+        bottom: 100%; 
+        left: 50%; 
+        transform: translateX(-50%) translateY(-8px); 
+        background: rgba(0, 0, 0, 0.85); 
+        color: white; 
+        padding: 6px 12px; 
+        border-radius: 6px; 
+        font-size: 13px; 
+        white-space: nowrap; 
+        opacity: 0; 
+        pointer-events: none; 
+        transition: opacity 0.3s; 
+        z-index: 1000; 
+    }
+    
+    .btn-icon:hover::after { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+    .btn-icon:hover { background: #f5f5f5; border-color: #999; transform: scale(1.03); }
+    
+    .no-trips { text-align: center; padding: 60px 20px; color: #999; font-size: 18px; }
+    
+    @@media (max-width: 768px) {
+        .trips-grid { grid-template-columns: 1fr; }
+        .filter-row { grid-template-columns: 1fr; }
+        .filter-bottom { flex-direction: column; gap: 16px; align-items: stretch; }
+        .btn-filter { width: 100%; }
+    }
+</style>
+
+<div class="trips-container">
+    
+    <h1 class="trips-header">@(onSaleOnly ? "🔥 Trips On Sale" : "✈️ Discover Amazing Trips")</h1>
+
+    <form method="get" action="/Trips" class="filter-form">
+        
+        <div class="filter-row">
+            
+            <!-- Country -->
+            <div class="filter-group">
+                <label class="filter-label">Country</label>
+                <div style="position: relative;">
+                    <input 
+                        type="text" 
+                        name="country" 
+                        id="countryInput" 
+                        class="filter-input" 
+                        value="@Context.Request.Query["country"]" 
+                        placeholder="Search..." 
+                        autocomplete="off"
+                    />
+                    <div id="autocomplete-list" class="autocomplete-items"></div>
+                </div>
+            </div>
+
+            <!-- Package Type -->
+            <div class="filter-group">
+                <label class="filter-label">Package Type</label>
+                <select name="packageType" class="filter-select">
+                    <option value="">All Types</option>
+                    @{
+                        var selectedType = Context.Request.Query["packageType"].ToString();
+                    }
+                    <option value="City" selected="@(selectedType == "City")">City</option>
+                    <option value="Beach" selected="@(selectedType == "Beach")">Beach</option>
+                    <option value="Adventure" selected="@(selectedType == "Adventure")">Adventure</option>
+                    <option value="Luxury" selected="@(selectedType == "Luxury")">Luxury</option>
+                    <option value="Romantic" selected="@(selectedType == "Romantic")">Romantic</option>
+                    <option value="Wellness" selected="@(selectedType == "Wellness")">Wellness</option>
+                    <option value="Nature" selected="@(selectedType == "Nature")">Nature</option>
+                    <option value="Cultural" selected="@(selectedType == "Cultural")">Cultural</option>
+                    <option value="Wildlife" selected="@(selectedType == "Wildlife")">Wildlife</option>
+                    <option value="Festival" selected="@(selectedType == "Festival")">Festival</option>
+                    <option value="Historical" selected="@(selectedType == "Historical")">Historical</option>
+                </select>
+            </div>
+
+            <!-- Min Price -->
+            <div class="filter-group">
+                <label class="filter-label">Min Price</label>
+                <input 
+                    type="number" 
+                    name="minPrice" 
+                    class="filter-input" 
+                    value="@Context.Request.Query["minPrice"]" 
+                    placeholder="$0"
+                />
+            </div>
+
+            <!-- Max Price -->
+            <div class="filter-group">
+                <label class="filter-label">Max Price</label>
+                <input 
+                    type="number" 
+                    name="maxPrice" 
+                    class="filter-input" 
+                    value="@Context.Request.Query["maxPrice"]" 
+                    placeholder="$10000"
+                />
+            </div>
+
+            <!-- Travel From -->
+            <div class="filter-group">
+                <label class="filter-label">Travel From</label>
+                <input 
+                    type="date" 
+                    name="travelFrom" 
+                    class="filter-input" 
+                    value="@Context.Request.Query["travelFrom"]"
+                />
+            </div>
+
+            <!-- Travel To -->
+            <div class="filter-group">
+                <label class="filter-label">Travel To</label>
+                <input 
+                    type="date" 
+                    name="travelTo" 
+                    class="filter-input" 
+                    value="@Context.Request.Query["travelTo"]"
+                />
+            </div>
+
+            <!-- Sort -->
+            <div class="filter-group">
+                <label class="filter-label">Sort By</label>
+                <select name="sort" class="filter-select">
+                    @{
+                        var selectedSort = Context.Request.Query["sort"].ToString();
+                    }
+                    <option value="" selected="@(selectedSort == "")">Default</option>
+                    <option value="popular" selected="@(selectedSort == "popular")">Most Popular</option>
+                    <option value="price_asc" selected="@(selectedSort == "price_asc")">Price: Low to High</option>
+                    <option value="price_desc" selected="@(selectedSort == "price_desc")">Price: High to Low</option>
+                    <option value="date_asc" selected="@(selectedSort == "date_asc")">Date: Earliest</option>
+                    <option value="date_desc" selected="@(selectedSort == "date_desc")">Date: Latest</option>
+                    <option value="country_asc" selected="@(selectedSort == "country_asc")">Country: A-Z</option>
+                    <option value="category" selected="@(selectedSort == "category")">By Category</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="filter-bottom">
+            <label class="checkbox-wrapper">
+                <input 
+                    type="checkbox" 
+                    name="onSaleOnly" 
+                    value="true" 
+                    class="checkbox-input"
+                    @(onSaleOnly ? "checked" : "")
+                />
+                <span class="checkbox-label">Show only trips on sale</span>
+            </label>
+            
+            <button type="submit" class="btn-filter">Search & Filter</button>
+        </div>
+
+    </form>
+
+    <p class="trips-count"><strong>@Model.Count</strong> trips found</p>
+
+    @if (Model.Count == 0)
+    {
+        <div class="no-trips">
+            <div style="font-size: 60px; margin-bottom: 20px;">🏝️</div>
+            <p>No trips found matching your criteria.</p>
+        </div>
+    }
+    else
+    {
+        <div class="trips-grid">
+            @foreach (var trip in Model)
+{
+    var availableRooms = ViewBag.AvailableRooms != null && ViewBag.AvailableRooms.ContainsKey(trip.TripId) 
+        ? ViewBag.AvailableRooms[trip.TripId] 
+        : trip.TotalRooms;
+    var isFull = availableRooms <= 0;
+                
+                <div class="trip-card">
+                    @if (trip.IsOnSale) { <div class="sale-badge">🔥 SALE!</div> }
+                    
+                    @if (!string.IsNullOrEmpty(trip.ImagePath))
+                    {
+                        <img src="@trip.ImagePath" alt="@trip.PackageName" class="trip-image" />
+                    }
+                    else
+                    {
+                        <div class="trip-image-placeholder">🌍</div>
+                    }
+
+                    <div class="trip-content">
+                        <h3 class="trip-title">@trip.PackageName</h3>
+                        <div class="trip-destination"><span>📍</span><span>@trip.Destination, @trip.Country</span></div>
+                        <div class="trip-dates"><span>📅</span><span>@trip.StartDate.ToString("MMM dd") - @trip.EndDate.ToString("MMM dd, yyyy")</span></div>
+                        
+                        <div class="trip-price">
+                            @if (trip.IsOnSale && trip.DiscountPrice.HasValue)
+                            {
+                                <span class="price-original">$@trip.BasePrice</span>
+                                <span class="price-current">$@trip.DiscountPrice.Value</span>
+                            }
+                            else
+                            {
+                                <span class="price-normal">$@trip.BasePrice</span>
+                            }
+                        </div>
+
+                        <div class="trip-info">
+                            <!-- ✅ הוסיף Available Rooms -->
+                            <div class="trip-info-item">
+                                <span class="trip-info-label">Available</span>
+                                <span class="trip-info-value" style="color: @(isFull ? "#dc3545" : availableRooms <= 3 ? "#ff9800" : "#28a745"); font-weight: 700;">
+                                    @if (isFull)
+                                    {
+                                        <span>SOLD OUT</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@availableRooms/@trip.TotalRooms</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="trip-info-item"><span class="trip-info-label">Type</span><span class="trip-info-value">@trip.PackageType</span></div>
+                            <div class="trip-info-item"><span class="trip-info-label">Duration</span><span class="trip-info-value">@((trip.EndDate - trip.StartDate).Days) days</span></div>
+                        </div>
+
+                        <div class="trip-actions">
+                            <a href="/Trips/Details/@trip.TripId" class="btn-icon" data-tooltip="View Details">👁️</a>
+                            <button type="button" onclick="addToCart(@trip.TripId)" class="btn-icon" data-tooltip="Add to Cart">🛒</button>
+                            <a href="/Bookings/Create?tripId=@trip.TripId" class="btn-icon" data-tooltip="Buy Now">💳</a>
+                            <a href="/WishList/Add?tripId=@trip.TripId" class="btn-icon" data-tooltip="Add to Wish List">❤️</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    const countries = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(countries));
+    const countryInput = document.getElementById('countryInput');
+    const autocompleteList = document.getElementById('autocomplete-list');
+
+    countryInput.addEventListener('input', function() {
+        const val = this.value.toLowerCase();
+        autocompleteList.innerHTML = '';
+        if (!val) return;
+        
+        const filtered = countries.filter(c => c.toLowerCase().includes(val));
+        filtered.forEach(country => {
+            const div = document.createElement('div');
+            div.textContent = country;
+            div.addEventListener('click', () => {
+                countryInput.value = country;
+                autocompleteList.innerHTML = '';
+            });
+            autocompleteList.appendChild(div);
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target !== countryInput) autocompleteList.innerHTML = '';
+    });
+
+    function addToCart(tripId) {
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/Cart/Add';
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'tripId';
+        input.value = tripId;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>

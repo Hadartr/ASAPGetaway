@@ -1,0 +1,366 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+    /* Hero Section - Smaller */
+    .hero-section {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.9), rgba(134, 239, 172, 0.9)), 
+                    url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920') center/cover;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 20px;
+        margin-bottom: 50px;
+        box-shadow: 0 10px 40px rgba(96, 165, 250, 0.2);
+    }
+
+    .hero-section h1 {
+        color: white;
+        font-size: 2.8em;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-section p {
+        color: white;
+        font-size: 1.3em;
+        margin-bottom: 8px;
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .trip-count {
+        display: inline-block;
+        background: white;
+        color: #60A5FA;
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 1.1em;
+        margin-top: 15px;
+        box-shadow: 0 5px 20px rgba(96, 165, 250, 0.3);
+    }
+
+    /* Section Titles */
+    .section-title {
+        text-align: center;
+        font-size: 2.5em;
+        font-weight: 700;
+        color: #334155;
+        margin: 60px 0 40px 0;
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #60A5FA, #86EFAC);
+        margin: 15px auto 0;
+        border-radius: 2px;
+    }
+
+    /* Services Grid */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+
+    .service-card {
+        background: linear-gradient(135deg, #FFFFFF, #F8FAFC);
+        border-radius: 20px;
+        padding: 40px 20px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 5px 20px rgba(148, 163, 184, 0.1);
+        border: 2px solid #E2E8F0;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        color: inherit;
+    }
+
+    .service-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 15px 40px rgba(96, 165, 250, 0.2);
+        border-color: #93C5FD;
+    }
+
+    .service-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3em;
+        margin: 0 auto 20px;
+        box-shadow: 0 8px 25px rgba(96, 165, 250, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .service-card:hover .service-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 12px 35px rgba(96, 165, 250, 0.3);
+        background: linear-gradient(135deg, #BFDBFE, #93C5FD);
+    }
+
+    .service-title {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 10px;
+    }
+
+    .service-description {
+        font-size: 0.95em;
+        color: #64748B;
+        line-height: 1.5;
+    }
+
+    /* User Area Cards */
+    .user-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 60px;
+    }
+
+    .user-card {
+        background: linear-gradient(135deg, #F8FAFC, #EFF6FF);
+        border-radius: 16px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: block;
+        color: inherit;
+        border: 2px solid #E2E8F0;
+    }
+
+    .user-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(96, 165, 250, 0.15);
+        border-color: #93C5FD;
+        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    }
+
+    .user-card-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+    }
+
+    .user-card-title {
+        font-size: 1.2em;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    /* Admin Section */
+    .admin-section {
+        background: linear-gradient(135deg, #FED7AA, #FDBA74);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        color: #9A3412;
+        margin-bottom: 40px;
+        border: 2px solid #FB923C;
+    }
+
+    .admin-section h2 {
+        color: #9A3412;
+        margin-bottom: 30px;
+    }
+
+    .admin-section h2::after {
+        background: #9A3412;
+    }
+
+    .admin-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .admin-btn {
+        background: white;
+        color: #F97316;
+        padding: 15px 35px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1em;
+        transition: all 0.3s ease;
+        display: inline-block;
+        border: 2px solid #FB923C;
+    }
+
+    .admin-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3);
+        background: #FEF3C7;
+        border-color: #F97316;
+    }
+
+    /* Login Prompt */
+    .login-prompt {
+        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+        padding: 50px;
+        border-radius: 20px;
+        text-align: center;
+        margin-bottom: 40px;
+        border: 2px solid #BFDBFE;
+    }
+
+    .login-prompt h3 {
+        color: #1E40AF;
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    .login-btn {
+        background: linear-gradient(135deg, #60A5FA, #3B82F6);
+        color: white;
+        padding: 18px 45px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.2em;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(96, 165, 250, 0.3);
+    }
+
+    .login-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(96, 165, 250, 0.4);
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2.2em;
+        }
+        
+        .services-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+        
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 2.5em;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <h1>✈️ Welcome to ASAPGetaway</h1>
+    <p>Your Gateway to Paradise</p>
+    <p style="font-size: 1.2em;">Discover, Book & Experience Amazing Trips</p>
+    <div class="trip-count">
+        🌍 @ViewBag.TripsCount Available Destinations
+    </div>
+</div>
+
+<!-- Explore Section -->
+<h2 class="section-title" id="services-section">🏖️ Explore Our Services</h2>
+
+<div class="services-grid">
+    <!-- All Destinations -->
+    <a href="/Trips" class="service-card">
+        <div class="service-icon">🌍</div>
+        <div class="service-title">All Destinations</div>
+        <div class="service-description">Browse our complete collection of amazing trips</div>
+    </a>
+
+    <!-- Hot Deals -->
+    <a href="/Trips?onSaleOnly=true" class="service-card">
+        <div class="service-icon">🔥</div>
+        <div class="service-title">Hot Deals</div>
+        <div class="service-description">Exclusive discounts and special offers</div>
+    </a>
+
+    <!-- ✅ Search Trips - FIXED: Direct link, no JavaScript interference -->
+    <a href="/Trips" class="service-card">
+        <div class="service-icon">🔍</div>
+        <div class="service-title">Search Trips</div>
+        <div class="service-description">Find your perfect destination</div>
+    </a>
+
+    <!-- Reviews -->
+    <a href="/SiteReviews" class="service-card">
+        <div class="service-icon">✈️</div>
+        <div class="service-title">Reviews</div>
+        <div class="service-description">See what travelers are saying</div>
+    </a>
+</div>
+
+<!-- ✅ My Travel Hub Section - ALWAYS has ID for navbar scroll -->
+<h2 class="section-title" id="hub-section">👤 My Travel Hub</h2>
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <!-- Logged In: Show User Cards -->
+    <div class="user-cards">
+        <a href="/MyBookings" class="user-card">
+            <div class="user-card-icon">📋</div>
+            <div class="user-card-title">My Bookings</div>
+        </a>
+
+        <a href="/WishList" class="user-card">
+            <div class="user-card-icon">❤️</div>
+            <div class="user-card-title">Wish List</div>
+        </a>
+
+        <a href="/WaitingList/My" class="user-card">
+            <div class="user-card-icon">⏳</div>
+            <div class="user-card-title">Waiting List</div>
+        </a>
+
+        <a href="/Cart" class="user-card">
+            <div class="user-card-icon">🛒</div>
+            <div class="user-card-title">Shopping Cart</div>
+        </a>
+    </div>
+}
+else
+{
+    <!-- Not Logged In: Show Login Prompt -->
+    <div class="login-prompt">
+        <h3>🌴 Ready to Start Your Journey?</h3>
+        <p style="font-size: 1.2em; color: #64748B; margin-bottom: 30px;">
+            Log in to manage bookings, save favorites, and unlock exclusive features
+        </p>
+        <a href="/Identity/Account/Login" class="login-btn">
+            🔐 Login to Your Account
+        </a>
+    </div>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <!-- Admin Section -->
+    <div class="admin-section" id="admin-section">
+        <h2 class="section-title">⚙️ Admin Control Panel</h2>
+        
+        <div class="admin-buttons">
+            <a href="/AdminTrips" class="admin-btn">
+                🌍 Manage Trips
+            </a>
+            <a href="/Admin/Users" class="admin-btn">
+                👥 Manage Users
+            </a>
+            <a href="/AdminWaitingList" class="admin-btn">
+                ⏳ Manage Waiting Lists
+            </a>
+        </div>
+    </div>
+}

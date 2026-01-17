@@ -1,0 +1,185 @@
+@{
+    int bookingId = ViewBag.BookingId ?? 0;
+    decimal totalAmount = ViewBag.TotalAmount ?? 0;
+}
+
+<style>
+    .payment-container { max-width: 600px; margin: 40px auto; padding: 30px; }
+    .payment-header { text-align: center; margin-bottom: 30px; color: #333; }
+    
+    .order-summary { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        padding: 25px; 
+        border-radius: 12px; 
+        margin-bottom: 30px; 
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .order-summary h3 { margin: 0 0 15px 0; font-size: 24px; font-weight: 700; }
+    .order-summary p { margin: 8px 0; font-size: 16px; }
+    .order-summary .total { font-size: 32px; font-weight: 700; margin-top: 15px; }
+    
+    .error-message { 
+        background: #f8d7da; 
+        color: #721c24; 
+        padding: 15px; 
+        border-radius: 8px; 
+        margin-bottom: 20px; 
+        text-align: center; 
+        font-weight: 600; 
+    }
+    
+    .payment-form { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .payment-form h3 { margin: 0 0 25px 0; color: #333; font-size: 22px; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-group label { 
+        display: block; 
+        margin-bottom: 8px; 
+        font-weight: 600; 
+        color: #555; 
+        font-size: 14px; 
+    }
+    
+    .form-group input { 
+        width: 100%; 
+        padding: 12px; 
+        border: 2px solid #e0e0e0; 
+        border-radius: 8px; 
+        font-size: 16px; 
+        transition: border-color 0.3s; 
+        box-sizing: border-box;
+    }
+    
+    .form-group input:focus { 
+        outline: none; 
+        border-color: #667eea; 
+    }
+    
+    .form-group.small input { width: 48%; display: inline-block; }
+    .form-group.small input:last-child { margin-left: 4%; }
+    
+    .form-actions { 
+        display: flex; 
+        gap: 15px; 
+        margin-top: 30px; 
+    }
+    
+    .btn-pay { 
+        flex: 1; 
+        padding: 15px 40px; 
+        font-size: 18px; 
+        font-weight: 700; 
+        background: linear-gradient(135deg, #28a745, #20c997); 
+        color: white; 
+        border: none; 
+        border-radius: 10px; 
+        cursor: pointer; 
+        transition: transform 0.2s; 
+    }
+    
+    .btn-pay:hover { transform: scale(1.05); }
+    
+    .btn-back { 
+        padding: 15px 30px; 
+        font-size: 16px; 
+        font-weight: 600; 
+        background: #6c757d; 
+        color: white; 
+        border: none; 
+        border-radius: 10px; 
+        cursor: pointer; 
+        text-decoration: none; 
+        display: inline-block; 
+        transition: background 0.3s; 
+    }
+    
+    .btn-back:hover { background: #5a6268; }
+    
+    .security-note { 
+        margin-top: 30px; 
+        text-align: center; 
+        color: #888; 
+        font-size: 14px; 
+        padding: 15px; 
+        background: #f8f9fa; 
+        border-radius: 8px; 
+    }
+    
+    .card-icons { 
+        display: flex; 
+        gap: 10px; 
+        margin-top: 10px; 
+        font-size: 24px; 
+    }
+</style>
+
+<div class="payment-container">
+    
+    <h1 class="payment-header">💳 Secure Payment</h1>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="error-message">
+            ❌ @ViewBag.Error
+        </div>
+    }
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+        <h3>📋 Order Summary</h3>
+        <p><strong>Booking ID:</strong> #@bookingId</p>
+        <p><strong>Number of Trips:</strong> 1</p>
+        <div class="total">
+            💰 Total: $@totalAmount
+        </div>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="payment-form">
+        <h3>💳 Payment Details</h3>
+
+        <form method="post" action="/Payments/Pay">
+            <input type="hidden" name="bookingId" value="@bookingId" />
+
+            <div class="form-group">
+                <label>👤 Card Holder Name</label>
+                <input type="text" name="cardHolder" required placeholder="John Doe" />
+            </div>
+
+            <div class="form-group">
+                <label>💳 Card Number</label>
+                <input type="text" name="cardNumber" required pattern="[0-9]{16}" maxlength="16" placeholder="1234 5678 1234 5678" />
+                <div class="card-icons">
+                    <span title="Visa">💳</span>
+                    <span title="Mastercard">💳</span>
+                    <span title="American Express">💳</span>
+                </div>
+            </div>
+
+            <div class="form-group small">
+                <input type="text" name="expiry" required pattern="[0-9]{2}/[0-9]{2}" maxlength="5" placeholder="MM/YY" />
+                <input type="text" name="cvv" required pattern="[0-9]{3}" maxlength="3" placeholder="CVV (123)" />
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-pay">
+                    🔒 Pay $@totalAmount
+                </button>
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/Trips" class="btn-back">← Back to Trips</a>
+        </div>
+    </div>
+
+    <!-- Security Note -->
+    <div class="security-note">
+        🔒 <strong>Secure Payment</strong><br/>
+        This is a simulated payment for educational purposes.<br/>
+        No real payment is processed. Credit card details are NOT saved.
+    </div>
+
+</div>

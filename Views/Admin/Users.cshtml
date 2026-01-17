@@ -1,0 +1,80 @@
+@model List<ASAPGetaway.Models.UserViewModel>
+
+<h1>👥 User Management</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        @TempData["Message"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        @TempData["Error"]
+    </div>
+}
+
+<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #007bff; color: white;">
+            <th>Email</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.UserName</td>
+                <td>@user.Roles</td>
+                <td>
+                    @if (user.IsLocked)
+                    {
+                        <span style="color: red; font-weight: bold;">🔒 Blocked</span>
+                    }
+                    else
+                    {
+                        <span style="color: green; font-weight: bold;">✅ Active</span>
+                    }
+                </td>
+                <td>
+                    @if (user.IsLocked)
+                    {
+                        <form method="post" action="/Admin/UnblockUser" style="display: inline;">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <button type="submit" style="background-color: #28a745; color: white; padding: 5px 15px; border: none; cursor: pointer; border-radius: 3px;">
+                                🔓 Unblock
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        @if (user.Roles != "Admin")
+                        {
+                            <form method="post" action="/Admin/BlockUser" style="display: inline;">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" style="background-color: #dc3545; color: white; padding: 5px 15px; border: none; cursor: pointer; border-radius: 3px;" 
+                                        onclick="return confirm('Are you sure you want to block this user?')">
+                                    🔒 Block
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span style="color: gray;">Admin - Cannot block</span>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br />
+<a href="/">← Back to Home</a>

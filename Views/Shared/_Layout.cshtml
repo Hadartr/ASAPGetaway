@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ASAPGetaway✈️</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/splash-animation.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ASAPGetaway.styles.css" asp-append-version="true" />
+    <style>
+        /* Navbar Enhanced - Light & Elegant */
+        .modern-navbar {
+            background: linear-gradient(135deg, #FFFFFF, #F0F9FF);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(96, 165, 250, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #E0F2FE;
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .navbar-brand {
+            color: #1E40AF;
+            text-decoration: none;
+            font-size: 1.8em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 2px solid #93C5FD;
+        }
+
+        .navbar-brand:hover {
+            background: linear-gradient(135deg, #BFDBFE, #93C5FD);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .navbar-center {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-link-item {
+            color: #334155;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            background: rgba(226, 232, 240, 0.5);
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-link-item:hover {
+            background: #E0F2FE;
+            border-color: #93C5FD;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+            color: #1E40AF;
+        }
+
+        .nav-link-item::after {
+            display: none;
+        }
+
+        .btn-logout {
+            all: revert !important;
+            background: linear-gradient(135deg, #FECACA, #FCA5A5) !important;
+            color: #991B1B !important;
+            border: 2px solid #F87171 !important;
+            padding: 8px 20px !important;
+            border-radius: 10px !important;
+            cursor: pointer !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.9em !important;
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.15) !important;
+            margin: 0 !important;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #FCA5A5, #F87171) !important;
+            border-color: #EF4444 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+            color: #7F1D1D !important;
+        }
+
+        .btn-logout::before {
+            display: none !important;
+        }
+
+        .btn-login, .btn-signup {
+            all: revert !important;
+            padding: 8px 20px !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            font-size: 0.9em !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            margin: 0 !important;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #DBEAFE, #BFDBFE) !important;
+            color: #1E40AF !important;
+            border: 2px solid #93C5FD !important;
+            box-shadow: 0 2px 10px rgba(96, 165, 250, 0.15) !important;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #BFDBFE, #93C5FD) !important;
+            border-color: #60A5FA !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3) !important;
+            color: #1E3A8A !important;
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0) !important;
+            color: #065F46 !important;
+            border: 2px solid #6EE7B7 !important;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15) !important;
+        }
+
+        .btn-signup:hover {
+            background: linear-gradient(135deg, #A7F3D0, #6EE7B7) !important;
+            border-color: #34D399 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
+            color: #064E3B !important;
+        }
+
+        .btn-login::before, .btn-signup::before {
+            display: none !important;
+        }
+
+        /* Admin Scroll Button */
+        .nav-link-item.admin-scroll {
+            background: linear-gradient(135deg, #FED7AA, #FDBA74);
+            color: #9A3412;
+            border: 2px solid #FB923C;
+            font-weight: 700;
+        }
+
+        .nav-link-item.admin-scroll:hover {
+            background: linear-gradient(135deg, #FDBA74, #FB923C);
+            color: #7C2D12;
+            border-color: #F97316;
+        }
+
+        /* Footer Modern */
+        .modern-footer {
+            background: linear-gradient(135deg, #F1F5F9, #E2E8F0);
+            color: #475569;
+            text-align: center;
+            padding: 40px 30px;
+            margin-top: 60px;
+            border-top: 2px solid #CBD5E1;
+        }
+
+        .modern-footer p {
+            margin: 8px 0;
+            color: #64748B;
+        }
+
+        .modern-footer a {
+            color: #3B82F6;
+            margin: 0 12px;
+            font-weight: 500;
+        }
+
+        .modern-footer a:hover {
+            color: #1E40AF;
+        }
+
+        /* Hide center on non-home pages */
+        .hide-center .navbar-center {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    @{
+        var isHomePage = ViewContext.RouteData.Values["controller"]?.ToString() == "Home" 
+                         && ViewContext.RouteData.Values["action"]?.ToString() == "Index";
+    }
+
+    @if (isHomePage)
+    {
+        <!-- 🌴 Full Splash Screen Animation - Home Page Only -->
+        <div class="splash-screen" id="splashScreen">
+            <div class="palm-left">🌴</div>
+            <div class="palm-right">🌴</div>
+            <div class="sun">☀️</div>
+            <div class="cloud cloud-1">☁️</div>
+            <div class="cloud cloud-2">☁️</div>
+            <div class="cloud cloud-3">☁️</div>
+            <div class="waves"></div>
+            <div class="splash-text">
+                <h1>✈️ ASAPGetaway</h1>
+                <p>Your Paradise Awaits...</p>
+            </div>
+        </div>
+        
+        <script>
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    document.getElementById('splashScreen').style.display = 'none';
+                }, 4000);
+            });
+        </script>
+    }
+
+    <div class="@(isHomePage ? "content-hidden" : "")" id="mainContent">
+        <nav class="modern-navbar @(isHomePage ? "" : "hide-center")">
+            <div class="navbar-container">
+                <!-- Left: Logo -->
+                @if (isHomePage)
+                {
+                    <a href="#" class="navbar-brand" id="logoScrollTop">
+                        ✈️ ASAPGetaway
+                    </a>
+                }
+                else
+                {
+                    <a href="/" class="navbar-brand">
+                        ✈️ ASAPGetaway
+                    </a>
+                }
+                
+                <!-- Center: Scroll Buttons (Only on Home Page) -->
+                @if (isHomePage)
+                {
+                    <div class="navbar-center">
+                        <a href="#" class="nav-link-item" data-scroll="services">🏖️ Our Services</a>
+                        <a href="#" class="nav-link-item" data-scroll="hub">👤 My Area</a>
+                        
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="#" class="nav-link-item admin-scroll" data-scroll="admin">⚙️ Admin Panel</a>
+                        }
+                    </div>
+                }
+                
+                <!-- Right: Logout / Login -->
+                <div class="navbar-right">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post" style="display: inline; margin: 0;">
+                            <button type="submit" class="btn-logout">Logout</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a href="/Identity/Account/Login" class="btn-login">Login</a>
+                        <a href="/Identity/Account/Register" class="btn-signup">Sign Up</a>
+                    }
+                </div>
+            </div>
+        </nav>
+
+        <div class="container fade-in">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="modern-footer">
+            <p style="font-size: 1.2em; margin-bottom: 12px; font-weight: 600;">✈️ ASAPGetaway - Your Dream Vacation Starts Here</p>
+            <p>&copy; 2025 ASAPGetaway. All rights reserved.</p>
+            <p style="margin-top: 16px;">
+                <a href="/">Home</a> | 
+                <a href="/Trips">Trips</a> | 
+                <a href="/SiteReviews">Reviews</a> | 
+                <a href="/Home/Privacy">Privacy</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Smart Scroll Navigation (Home Page Only) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isHomePage = @Json.Serialize(isHomePage);
+            
+            if (isHomePage) {
+                // Logo scroll to top
+                const logoScrollTop = document.getElementById('logoScrollTop');
+                if (logoScrollTop) {
+                    logoScrollTop.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                }
+                
+                // Scroll buttons
+                const scrollButtons = document.querySelectorAll('[data-scroll]');
+                scrollButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const target = this.getAttribute('data-scroll');
+                        
+                        let sectionId = '';
+                        if (target === 'services') {
+                            sectionId = 'services-section';
+                        } else if (target === 'hub') {
+                            sectionId = 'hub-section';
+                        } else if (target === 'admin') {
+                            sectionId = 'admin-section';
+                        }
+                        
+                        const section = document.getElementById(sectionId);
+                        if (section) {
+                            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

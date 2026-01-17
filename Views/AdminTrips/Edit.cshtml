@@ -1,0 +1,243 @@
+@model ASAPGetaway.Models.Trip
+
+<h1>Admin - Edit Trip</h1>
+
+<p>
+    TripId: <strong>@Model.TripId</strong>
+</p>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div style="color:red; background: #FEE2E2; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <p><strong>⚠️ Please fix the errors below.</strong></p>
+    </div>
+}
+
+<form method="post" action="/AdminTrips/Edit" enctype="multipart/form-data">
+
+    <input type="hidden" name="TripId" value="@Model.TripId" />
+    <input type="hidden" name="ImagePath" value="@Model.ImagePath" />
+
+    <!-- ===== BASIC INFORMATION ===== -->
+    <h3 style="color: #1E40AF; border-bottom: 2px solid #BFDBFE; padding-bottom: 10px;">
+        📝 Basic Information
+    </h3>
+
+    <div>
+        <label>Package Name:</label><br />
+        <input type="text" name="PackageName" value="@Model.PackageName" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("PackageName", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Destination:</label><br />
+        <input type="text" name="Destination" value="@Model.Destination" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("Destination", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Country:</label><br />
+        <input type="text" name="Country" value="@Model.Country" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("Country", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Start Date:</label><br />
+        <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("StartDate", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>End Date:</label><br />
+        <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("EndDate", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Base Price:</label><br />
+        <input type="number" step="0.01" name="BasePrice" value="@Model.BasePrice" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("BasePrice", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Total Rooms:</label><br />
+        <input type="number" name="TotalRooms" value="@Model.TotalRooms" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("TotalRooms", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Min Age:</label><br />
+        <input type="number" name="MinAge" value="@Model.MinAge" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("MinAge", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Package Type:</label><br />
+        <input type="text" name="PackageType" value="@Model.PackageType" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("PackageType", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Description:</label><br />
+        <textarea name="Description" rows="4" cols="60" style="width: 100%; padding: 10px;">@Model.Description</textarea>
+    </div>
+
+    <br />
+
+    <div>
+        <label><strong>📷 Current Image:</strong></label><br />
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath" alt="Trip Image" style="max-width: 300px; max-height: 200px; border: 1px solid #ccc; margin: 10px 0;" />
+        }
+        else
+        {
+            <p style="color: #999;">No image uploaded yet.</p>
+        }
+    </div>
+
+    <br />
+
+    <div>
+        <label><strong>📷 Upload New Image (optional):</strong></label><br />
+        <input type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.webp" />
+        @Html.ValidationMessage("image", "", new { @style = "color: red;" })
+        <br />
+        <small style="color: #666;">Upload a new image to replace the current one.</small>
+    </div>
+
+    <br />
+
+    <!-- ===== DISCOUNT SETTINGS ===== -->
+    <h3 style="margin-top: 30px; color: #F59E0B; border-bottom: 2px solid #FED7AA; padding-bottom: 10px;">
+        💰 Discount Settings
+    </h3>
+
+    <div>
+        <label>Discount Price (optional):</label><br />
+        <input type="number" step="0.01" name="DiscountPrice" value="@(Model.DiscountPrice.HasValue ? Model.DiscountPrice.Value.ToString() : "")" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("DiscountPrice", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Discount Start Date (optional):</label><br />
+        <input type="date" name="DiscountStartDate" value="@(Model.DiscountStartDate.HasValue ? Model.DiscountStartDate.Value.ToString("yyyy-MM-dd") : "")" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("DiscountStartDate", "", new { @style = "color: red;" })
+    </div>
+
+    <br />
+
+    <div>
+        <label>Discount End Date (optional):</label><br />
+        <input type="date" name="DiscountEndDate" value="@(Model.DiscountEndDate.HasValue ? Model.DiscountEndDate.Value.ToString("yyyy-MM-dd") : "")" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("DiscountEndDate", "", new { @style = "color: red;" })
+        <br />
+        <small style="color: #666;">⚠️ Maximum 7 days from start date</small>
+    </div>
+
+    <br />
+
+    <!-- ===== BOOKING & CANCELLATION RULES ===== -->
+    <h3 style="margin-top: 30px; color: #3B82F6; border-bottom: 2px solid #BFDBFE; padding-bottom: 10px;">
+        📋 Booking & Cancellation Rules
+    </h3>
+
+    <div>
+        <label>Last Booking Date (optional):</label><br />
+        <input type="date" name="LastBookingDate" value="@(Model.LastBookingDate.HasValue ? Model.LastBookingDate.Value.ToString("yyyy-MM-dd") : "")" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("LastBookingDate", "", new { @style = "color: red;" })
+        <br />
+        <small style="color: #666;">Leave empty for default (7 days before departure)</small>
+    </div>
+
+    <br />
+
+    <div>
+        <label>Cancellation Days Before Departure:</label><br />
+        <input type="number" name="CancellationDaysBeforeDeparture" value="@Model.CancellationDaysBeforeDeparture" min="0" max="90" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("CancellationDaysBeforeDeparture", "", new { @style = "color: red;" })
+        <br />
+        <small style="color: #666;">How many days before departure can users cancel</small>
+    </div>
+
+    <br />
+
+    <!-- ===== REMINDER SETTINGS ===== -->
+    <h3 style="margin-top: 30px; color: #10B981; border-bottom: 2px solid #A7F3D0; padding-bottom: 10px;">
+        🔔 Reminder Settings
+    </h3>
+
+    <div>
+        <label>
+            <input type="checkbox" name="EnableReminders" value="true" @(Model.EnableReminders ? "checked" : "") />
+            Enable Reminders
+        </label>
+        <br />
+        <small style="color: #666;">Send automatic email reminders to users</small>
+    </div>
+
+    <br />
+
+    <div>
+        <label>Reminder Days Before Departure:</label><br />
+        <input type="number" name="ReminderDaysBeforeDeparture" value="@Model.ReminderDaysBeforeDeparture" min="1" max="30" style="width: 100%; padding: 10px;" />
+        @Html.ValidationMessage("ReminderDaysBeforeDeparture", "", new { @style = "color: red;" })
+        <br />
+        <small style="color: #666;">Days before departure to send reminder</small>
+    </div>
+
+    <br />
+
+    <!-- ===== ACTIVE STATUS ===== -->
+    <h3 style="margin-top: 30px; color: #6366F1; border-bottom: 2px solid #C7D2FE; padding-bottom: 10px;">
+        ✅ Status
+    </h3>
+
+    <div>
+        <label>Active:</label><br />
+        <select name="IsActive" style="width: 100%; padding: 10px;">
+            @if (Model.IsActive)
+            {
+                <option value="true" selected>Yes</option>
+                <option value="false">No</option>
+            }
+            else
+            {
+                <option value="true">Yes</option>
+                <option value="false" selected>No</option>
+            }
+        </select>
+    </div>
+
+    <br /><br />
+
+    <button type="submit" style="background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 15px 40px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; cursor: pointer;">
+        💾 Save Changes
+    </button>
+</form>
+
+<br />
+
+<p>
+    <a href="/AdminTrips" style="color: #3B82F6; font-weight: 600;">← Back to Admin Trips</a>
+</p>

@@ -1,0 +1,120 @@
+@model List<ASAPGetaway.Models.CartItem>
+
+<h1>🛒 Shopping Cart</h1>
+
+@if (TempData["Message"] != null)
+{
+    <p style="color:green; font-weight:bold;">
+        @TempData["Message"]
+    </p>
+}
+
+@if (TempData["Error"] != null)
+{
+    <p style="color:red; font-weight:bold;">
+        @TempData["Error"]
+    </p>
+}
+
+@if (Model.Count == 0)
+{
+    <p>Your cart is empty.</p>
+    <p><a href="/Trips">← Browse Trips</a></p>
+}
+else
+{
+    <table border="1" cellpadding="10" cellspacing="0" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Trip</th>
+                <th>Destination</th>
+                <th>Dates</th>
+                <th>Price per Person</th>
+                <th>People</th>
+                <th>Subtotal</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @{
+            decimal grandTotal = 0;
+        }
+        @foreach (var item in Model)
+        {
+            decimal subtotal = item.Price * item.NumberOfPeople;
+            grandTotal += subtotal;
+            
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                    {
+                        <img src="@item.ImagePath" alt="@item.PackageName" style="width: 80px; height: 60px; object-fit: cover; border-radius: 5px;" />
+                    }
+                    else
+                    {
+                        <div style="width: 80px; height: 60px; background: #ddd; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+                            🌍
+                        </div>
+                    }
+                </td>
+                <td>@item.PackageName</td>
+                <td>@item.Destination</td>
+                <td>
+                    @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                </td>
+                <td style="text-align: right;">$@item.Price</td>
+                <td style="text-align: center;">
+                    <form method="post" action="/Cart/UpdateQuantity" style="display: inline;">
+                        <input type="hidden" name="tripId" value="@item.TripId" />
+                        <input type="number" name="numberOfPeople" value="@item.NumberOfPeople" min="1" max="10" style="width: 60px;" />
+                        <button type="submit" style="padding: 2px 8px;">Update</button>
+                    </form>
+                </td>
+                <td style="text-align: right; font-weight: bold;">$@subtotal</td>
+                <td>
+                    <form method="post" action="/Cart/Remove" style="display: inline;">
+                        <input type="hidden" name="tripId" value="@item.TripId" />
+                        <button type="submit" style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; cursor: pointer;">
+                            Remove
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr style="background-color: #f0f0f0; font-weight: bold; font-size: 1.2em;">
+                <td colspan="6" style="text-align: right; padding: 15px;">Grand Total:</td>
+                <td style="text-align: right; color: #28a745; padding: 15px;">$@grandTotal</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="margin-top: 30px; display: flex; justify-content: space-between;">
+        <div>
+            <a href="/Trips">
+                <button type="button" style="padding: 10px 20px; background-color: #6c757d; color: white; border: none; cursor: pointer;">
+                    ← Continue Shopping
+                </button>
+            </a>
+            
+            <form method="post" action="/Cart/Clear" style="display: inline; margin-left: 10px;">
+                <button type="submit" style="padding: 10px 20px; background-color: #dc3545; color: white; border: none; cursor: pointer;">
+                    Clear Cart
+                </button>
+            </form>
+        </div>
+
+        <form method="post" action="/Cart/Checkout">
+            <button type="submit" style="padding: 15px 30px; font-size: 1.1em; background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold;">
+                Proceed to Checkout →
+            </button>
+        </form>
+    </div>
+}
+
+<p style="margin-top: 40px;">
+    <a href="/MyBookings">View My Bookings</a>
+</p>

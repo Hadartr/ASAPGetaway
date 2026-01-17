@@ -1,0 +1,55 @@
+@model List<ASAPGetaway.Models.WaitingListItem>
+
+<h2>Waiting List - @ViewBag.Trip.PackageName</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5>@ViewBag.Trip.Destination, @ViewBag.Trip.Country</h5>
+        <p>Start Date: @ViewBag.Trip.StartDate.ToString("MMMM dd, yyyy")</p>
+        <p>Total Rooms: @ViewBag.Trip.TotalRooms</p>
+        <p>People Waiting: @Model.Count</p>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (Model.Count == 0)
+{
+    <p>No one is currently waiting for this trip.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>User Email</th>
+                <th>Joined</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@ViewData[$"Email_{item.UserId}"]</td>
+                    <td>@item.JoinDate.ToString("MMM dd, yyyy HH:mm")</td>
+                    <td>
+                        <form method="post" action="@Url.Action("Remove")" style="display:inline;">
+                            <input type="hidden" name="tripId" value="@item.TripId" />
+                            <input type="hidden" name="userId" value="@item.UserId" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this user?')">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a href="@Url.Action("Index")" class="btn btn-secondary">Back to List</a>

@@ -1,0 +1,182 @@
+@model List<ASAPGetaway.Models.Trip>
+
+<!-- ✅ הודעות הצלחה ושגיאה -->
+@if (TempData["Success"] != null)
+{
+    <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 20px auto; max-width: 1600px; text-align: center; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        ✅ @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin: 20px auto; max-width: 1600px; text-align: center; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        ❌ @TempData["Error"]
+    </div>
+}
+
+<style>
+    .trips-container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+    .trips-header { text-align: center; margin-bottom: 30px; color: #333; display: flex; justify-content: space-between; align-items: center; }
+    .trips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; margin-bottom: 40px; }
+    
+    .trip-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; position: relative; }
+    .trip-card.inactive { opacity: 0.6; border: 2px solid #dc3545; }
+    .trip-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+    
+    .trip-image { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .trip-image-placeholder { width: 100%; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 50px; color: white; }
+    
+    .trip-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    
+    .status-badge { position: absolute; top: 15px; right: 15px; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 13px; z-index: 10; }
+    .badge-active { background: #28a745; color: white; }
+    .badge-inactive { background: #dc3545; color: white; }
+    
+    .trip-title { font-size: 20px; font-weight: 700; color: #333; margin-bottom: 10px; }
+    .trip-id { font-size: 13px; color: #999; margin-bottom: 15px; }
+    
+    .trip-info { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; }
+    .trip-info-row { display: flex; justify-content: space-between; align-items: center; }
+    .trip-info-label { color: #666; font-weight: 500; }
+    .trip-info-value { color: #333; font-weight: 600; }
+    
+    .trip-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
+    
+    .btn-admin { position: relative; width: 100%; height: 50px; padding: 0; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 22px; text-decoration: none; background: white; color: #666; }
+    .btn-admin::after { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-8px); background: rgba(0, 0, 0, 0.85); color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; }
+    .btn-admin:hover::after { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+    .btn-admin:hover { background: #f5f5f5; border-color: #999; transform: scale(1.03); }
+    
+    .btn-create { display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 16px; }
+    .btn-create:hover { transform: scale(1.05); }
+    
+    @@media (max-width: 768px) { .trips-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="trips-container">
+    
+    <div class="trips-header">
+        <h1>👨‍💼 Admin - Manage Trips</h1>
+        <a href="/AdminTrips/Create" class="btn-create">➕ Create New Trip</a>
+    </div>
+
+    <div class="trips-grid">
+        @foreach (var trip in Model)
+        {
+            <div class="trip-card @(trip.IsActive ? "" : "inactive")">
+                
+                <div class="status-badge @(trip.IsActive ? "badge-active" : "badge-inactive")">
+                    @(trip.IsActive ? "Active" : "Inactive")
+                </div>
+                
+                @if (!string.IsNullOrEmpty(trip.ImagePath))
+                {
+                    <img src="@trip.ImagePath" alt="@trip.PackageName" class="trip-image" />
+                }
+                else
+                {
+                    <div class="trip-image-placeholder">🌍</div>
+                }
+
+                <div class="trip-content">
+                    
+                    <h3 class="trip-title">@trip.PackageName</h3>
+                    <p class="trip-id">Trip ID: @trip.TripId</p>
+
+                    <div class="trip-info">
+                        <div class="trip-info-row">
+                            <span class="trip-info-label">📍 Destination</span>
+                            <span class="trip-info-value">@trip.Destination, @trip.Country</span>
+                        </div>
+                        <div class="trip-info-row">
+                            <span class="trip-info-label">📅 Dates</span>
+                            <span class="trip-info-value">@trip.StartDate.ToString("MMM dd") - @trip.EndDate.ToString("MMM dd, yyyy")</span>
+                        </div>
+                        <div class="trip-info-row">
+                            <span class="trip-info-label">💰 Base Price</span>
+                            <span class="trip-info-value">$@trip.BasePrice</span>
+                        </div>
+                        @if (trip.DiscountPrice.HasValue)
+                        {
+                            <div class="trip-info-row">
+                                <span class="trip-info-label">🔥 Discount</span>
+                                <span class="trip-info-value" style="color: #28a745;">$@trip.DiscountPrice.Value (until @(trip.DiscountEndDate?.ToString("MMM dd") ?? "-"))</span>
+                            </div>
+                        }
+                        <div class="trip-info-row">
+                            <span class="trip-info-label">🏠 Rooms</span>
+                            <span class="trip-info-value">@trip.TotalRooms</span>
+                        </div>
+                        <div class="trip-info-row">
+                            <span class="trip-info-label">🏷️ Type</span>
+                            <span class="trip-info-value">@trip.PackageType</span>
+                        </div>
+                    </div>
+
+                    <div class="trip-actions">
+                        
+                        <a href="/AdminTrips/Edit/@trip.TripId" class="btn-admin" data-tooltip="Edit Trip">
+                            ✏️
+                        </a>
+
+                        <a href="/AdminTrips/Pricing/@trip.TripId" class="btn-admin" data-tooltip="Manage Pricing">
+                            💰
+                        </a>
+
+                        @if (trip.IsActive)
+                        {
+                            <button type="button" onclick="toggleActive(@trip.TripId, false)" class="btn-admin" data-tooltip="Deactivate">
+                                🔴
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" onclick="toggleActive(@trip.TripId, true)" class="btn-admin" data-tooltip="Activate">
+                                🟢
+                            </button>
+                        }
+
+                        <button type="button" onclick="deleteTrip(@trip.TripId, '@trip.PackageName')" class="btn-admin" data-tooltip="Delete">
+                            🗑️
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+<p style="text-align: center; margin-top: 30px;">
+    <a href="/Trips" style="color: #007bff; font-weight: 600; font-size: 16px;">← Back to Trips</a>
+</p>
+
+<script>
+    function toggleActive(tripId, activate) {
+        const action = activate ? 'Activate' : 'Deactivate';
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = `/AdminTrips/${action}/${tripId}`;
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function deleteTrip(tripId, tripName) {
+        if (!confirm(`Are you sure you want to delete ${tripName}?`)) return;
+        
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = `/AdminTrips/Delete/${tripId}`;
+        
+        const token = document.createElement('input');
+        token.type = 'hidden';
+        token.name = '__RequestVerificationToken';
+        token.value = '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/)[1];
+        
+        form.appendChild(token);
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>

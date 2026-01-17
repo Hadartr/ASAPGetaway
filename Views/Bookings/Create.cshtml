@@ -1,0 +1,38 @@
+@model ASAPGetaway.Models.Booking
+
+<h1>Booking</h1>
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red; font-weight:bold; margin-bottom:15px;">
+        @ViewBag.Error
+    </div>
+}
+
+<p>
+    <strong>Package:</strong> @ViewBag.PackageName <br />
+    <strong>Price per person:</strong> @ViewBag.UnitPrice
+</p>
+
+<form method="post" action="/Bookings/Create">
+
+    <input type="hidden" name="TripId" value="@Model.TripId" />
+
+    <div>
+        <label>Number of People:</label><br />
+        <input type="number" name="NumberOfPeople"
+               value="@Model.NumberOfPeople"
+               min="1" />
+        @Html.ValidationMessage("NumberOfPeople")
+    </div>
+
+    <br />
+
+    <button type="submit">Confirm Booking</button>
+</form>
+
+<hr />
+
+<p>
+    <a href="/Trips">← Back to Trips</a>
+</p>

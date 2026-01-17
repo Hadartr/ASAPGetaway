@@ -1,0 +1,254 @@
+/* ASAPGetaway - Light & Elegant Design */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables for consistent theming */
+:root {
+    --primary: #60A5FA;
+    --primary-dark: #3B82F6;
+    --secondary: #FCA5A5;
+    --success: #86EFAC;
+    --danger: #FCA5A5;
+    --light: #F8FAFC;
+    --white: #FFFFFF;
+    --dark: #334155;
+    --gray: #94A3B8;
+    --border: #E2E8F0;
+}
+
+/* Global reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base styles */
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #F8FAFC, #EFF6FF);
+    color: var(--dark);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+/* Full-width container */
+.container, .main-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 40px 30px;
+    background: var(--white);
+    min-height: 100vh;
+}
+
+/* Typography */
+h1 {
+    font-size: 3em;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 16px;
+}
+
+h2 {
+    font-size: 2.2em;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 50px 0 30px 0;
+}
+
+h3 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 25px 0 15px 0;
+}
+
+p {
+    color: var(--gray);
+    font-size: 1.05em;
+    margin: 12px 0;
+}
+
+/* Buttons - light blue gradient */
+button[type="button"]:not(.btn-logout), 
+button[type="submit"]:not(.btn-logout),
+.btn:not(.btn-logout) {
+    font-family: 'Poppins', sans-serif;
+    padding: 14px 32px;
+    margin: 8px 4px;
+    background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+    color: #1E40AF !important;
+    border-radius: 12px;
+    border: 2px solid #93C5FD;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 15px rgba(96, 165, 250, 0.15);
+}
+
+button:not(.btn-logout):hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #BFDBFE, #93C5FD);
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Links */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* Cards with hover effect */
+.card {
+    background: linear-gradient(135deg, #FFFFFF, #F8FAFC);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 15px rgba(148, 163, 184, 0.08);
+    border: 2px solid #E2E8F0;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(148, 163, 184, 0.15);
+}
+
+/* Form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    padding: 14px 18px;
+    margin: 10px 0;
+    border: 2px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 1em;
+    background-color: #F8FAFC;
+    color: var(--dark);
+    transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #93C5FD;
+    box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.1);
+    background-color: white;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 15px rgba(148, 163, 184, 0.08);
+    border: 2px solid #E2E8F0;
+    overflow: hidden;
+}
+
+table th {
+    background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+    color: #1E40AF;
+    padding: 18px 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F1F5F9;
+    color: var(--dark);
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tr {
+    transition: background-color 0.2s ease;
+}
+
+table tr:hover {
+    background-color: #F0F9FF;
+}
+
+/* Footer */
+.footer, .modern-footer {
+    background: linear-gradient(135deg, #CBD5E1, #94A3B8);
+    color: white;
+    text-align: center;
+    padding: 50px 30px;
+    margin-top: 80px;
+}
+
+.footer p, .modern-footer p {
+    color: rgba(255, 255, 255, 0.95);
+    margin: 10px 0;
+}
+
+.footer a, .modern-footer a {
+    color: #DBEAFE;
+    font-weight: 500;
+}
+
+.footer a:hover, .modern-footer a:hover {
+    color: white;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.2em;
+    }
+    
+    h2 {
+        font-size: 1.8em;
+    }
+    
+    .container, .main-container {
+        padding: 25px 20px;
+    }
+}

@@ -1,0 +1,216 @@
+@model List<ASAPGetaway.Models.SiteReview>
+
+<style>
+    .planes {
+        font-size: 1.5em;
+    }
+    
+    .review-card {
+        background-color: #f8f9fa;
+        border-left: 4px solid #007bff;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .review-comment {
+        color: #333;
+        line-height: 1.6;
+    }
+    .review-date {
+        color: #888;
+        font-size: 0.9em;
+    }
+    
+    .add-review-form {
+        background-color: #fff;
+        border: 2px solid #e0e0e0;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+    
+    .plane-rating {
+        display: inline-flex;
+        font-size: 2.5em;
+        cursor: pointer;
+        margin: 10px 0;
+    }
+    .plane-rating span {
+        padding: 0 3px;
+        transition: all 0.2s;
+    }
+</style>
+
+<h1>✈️ Share Your Experience</h1>
+<p>Tell us about your experience with ASAPGetaway!</p>
+
+@if (TempData["Message"] != null)
+{
+    <div style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        @TempData["Message"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        @TempData["Error"]
+    </div>
+}
+
+@{
+    double avgRating = ViewBag.AverageRating;
+}
+
+@if (Model.Count > 0)
+{
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <strong>Average Rating:</strong> 
+        <span class="planes">
+            @for (int i = 1; i <= 5; i++)
+            {
+                if (i <= Math.Round(avgRating))
+                {
+                    <span>✈️</span>
+                }
+                else
+                {
+                    <span style="opacity: 0.2;">✈️</span>
+                }
+            }
+        </span>
+        <span>(@avgRating.ToString("0.0") / 5.0)</span>
+    </div>
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <div class="add-review-form">
+        <h3>✍️ Write Your Review</h3>
+
+        <form method="post" action="/SiteReviews/Add">
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: bold; display: block; margin-bottom: 10px;">Your Rating:</label>
+                <div id="planeRating" class="plane-rating">
+                    <span data-value="1">✈️</span>
+                    <span data-value="2">✈️</span>
+                    <span data-value="3">✈️</span>
+                    <span data-value="4">✈️</span>
+                    <span data-value="5">✈️</span>
+                </div>
+                <input type="hidden" name="rating" id="ratingInput" required />
+            </div>
+
+            <script>
+                const planes = document.querySelectorAll('#planeRating span');
+                const ratingInput = document.getElementById('ratingInput');
+                let selectedRating = 0;
+
+                planes.forEach(plane => {
+                    plane.addEventListener('click', function() {
+                        selectedRating = this.getAttribute('data-value');
+                        ratingInput.value = selectedRating;
+                        updatePlanes(selectedRating);
+                    });
+
+                    plane.addEventListener('mouseover', function() {
+                        updatePlanes(this.getAttribute('data-value'));
+                    });
+                });
+
+                document.getElementById('planeRating').addEventListener('mouseout', function() {
+                    updatePlanes(selectedRating);
+                });
+
+                function updatePlanes(rating) {
+                    planes.forEach((plane, index) => {
+                        if (index < rating) {
+                            plane.style.opacity = '1';
+                            plane.style.transform = 'scale(1.2)';
+                        } else {
+                            plane.style.opacity = '0.2';
+                            plane.style.transform = 'scale(1)';
+                        }
+                    });
+                }
+            </script>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">Your Review:</label>
+                <textarea name="comment" rows="4" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: Arial, sans-serif;"></textarea>
+            </div>
+
+            <button type="submit" style="background-color: #007bff; color: white; padding: 12px 30px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 1em;">
+                Submit Review
+            </button>
+        </form>
+    </div>
+}
+else
+{
+    <p style="color: #888; font-style: italic; margin-bottom: 30px;">
+        <a href="/Identity/Account/Login" style="color: #007bff; text-decoration: underline;">Log in</a> to write a review.
+    </p>
+}
+
+<hr style="margin: 40px 0;" />
+
+<h2>✈️ Customer Reviews (@Model.Count)</h2>
+
+@if (Model.Count == 0)
+{
+    <p style="color: #888; font-style: italic;">No reviews yet. Be the first to share your experience!</p>
+}
+else
+{
+    foreach (var review in Model)
+    {
+        <div class="review-card">
+            <div class="review-header">
+                <div>
+                    <strong>@(review.UserEmail ?? "Anonymous")</strong>
+                    <div class="planes">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= review.Rating)
+                            {
+                                <span>✈️</span>
+                            }
+                            else
+                            {
+                                <span style="opacity: 0.2;">✈️</span>
+                            }
+                        }
+                    </div>
+                </div>
+                <div>
+                    <div class="review-date">
+                        @review.CreatedAt.ToString("dd MMM yyyy")
+                    </div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <form method="post" action="/SiteReviews/Delete" style="display: inline; margin-top: 5px;">
+                            <input type="hidden" name="reviewId" value="@review.ReviewId" />
+                            <button type="submit" style="background-color: #dc3545; color: white; padding: 3px 10px; border: none; cursor: pointer; border-radius: 3px; font-size: 0.8em;" 
+                                    onclick="return confirm('Delete this review?')">
+                                🗑️ Delete
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+            <div class="review-comment">
+                "@review.Comment"
+            </div>
+        </div>
+    }
+}
+
+<br />
+<a href="/">← Back to Home</a>

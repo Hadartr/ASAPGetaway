@@ -1,0 +1,610 @@
+@model ASAPGetaway.Models.Trip
+@using ASAPGetaway.Models
+
+@{
+    int bookedRooms = ViewBag.BookedRooms ?? 0;
+    int availableRooms = ViewBag.AvailableRooms ?? Model.TotalRooms;
+    bool isFull = ViewBag.IsFull ?? false;
+}
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    .details-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    
+    /* Header */
+    .trip-header { margin-bottom: 40px; }
+    .trip-title { font-size: 48px; font-weight: 800; color: #2c3e50; margin-bottom: 15px; }
+    .trip-location { font-size: 20px; color: #7f8c8d; display: flex; align-items: center; gap: 10px; }
+    
+    /* Image */
+    .trip-hero-image { 
+        width: 100%; 
+        height: 500px; 
+        object-fit: cover; 
+        border-radius: 20px; 
+        margin-bottom: 40px; 
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    .trip-hero-placeholder { 
+        width: 100%; 
+        height: 500px; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        color: white; 
+        font-size: 120px; 
+        border-radius: 20px; 
+        margin-bottom: 40px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    /* Grid Layout */
+    .details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-bottom: 60px; }
+    
+    /* Left Column - Info Cards */
+    .info-section { background: white; padding: 35px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 30px; }
+    .info-section h2 { font-size: 28px; font-weight: 700; color: #2c3e50; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #667eea; }
+    
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .info-item { padding: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #667eea; }
+    .info-label { font-size: 13px; font-weight: 600; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .info-value { font-size: 18px; font-weight: 700; color: #2c3e50; }
+    
+    .description-box { padding: 20px; background: #f0f3ff; border-radius: 10px; line-height: 1.8; color: #495057; border-left: 4px solid #667eea; }
+    
+    /* Right Column - Booking Card */
+    .booking-card { 
+        background: white; 
+        padding: 35px; 
+        border-radius: 16px; 
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12); 
+        position: sticky; 
+        top: 20px;
+        border: 2px solid #e9ecef;
+    }
+    
+    .price-section { 
+        text-align: center; 
+        padding: 25px; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        border-radius: 12px; 
+        margin-bottom: 25px;
+        color: white;
+    }
+    
+    .price-label { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; opacity: 0.9; }
+    .price-current { font-size: 48px; font-weight: 800; }
+    .price-original { font-size: 24px; text-decoration: line-through; opacity: 0.7; margin-bottom: 5px; }
+    .sale-badge { background: #e74c3c; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-top: 10px; }
+    
+    .rooms-status { 
+        padding: 15px; 
+        border-radius: 10px; 
+        text-align: center; 
+        font-weight: 700; 
+        margin-bottom: 25px;
+        font-size: 16px;
+    }
+    .rooms-available { background: #d4edda; color: #155724; border: 2px solid #28a745; }
+    .rooms-warning { background: #fff3cd; color: #856404; border: 2px solid #ffc107; }
+    .rooms-full { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
+    
+    .action-buttons { display: flex; flex-direction: column; gap: 12px; }
+    .btn-action { 
+        width: 100%; 
+        padding: 16px; 
+        border: none; 
+        border-radius: 10px; 
+        font-size: 16px; 
+        font-weight: 700; 
+        cursor: pointer; 
+        transition: all 0.2s; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 10px;
+        text-decoration: none;
+    }
+    
+    .btn-primary { background: #28a745; color: white; }
+    .btn-primary:hover { background: #218838; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(40, 167, 69, 0.3); }
+    
+    .btn-secondary { background: #ff9800; color: white; }
+    .btn-secondary:hover { background: #e68900; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 152, 0, 0.3); }
+    
+    .btn-tertiary { background: #e91e63; color: white; }
+    .btn-tertiary:hover { background: #c2185b; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(233, 30, 99, 0.3); }
+    
+    .btn-disabled { background: #e0e0e0; color: #999; cursor: not-allowed; }
+    .btn-disabled:hover { transform: none; box-shadow: none; }
+    
+    /* Reviews Section */
+    .reviews-section { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .reviews-header { font-size: 32px; font-weight: 700; color: #2c3e50; margin-bottom: 25px; }
+    
+    .avg-rating { 
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); 
+        padding: 20px 30px; 
+        border-radius: 12px; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 15px; 
+        color: white; 
+        font-weight: 700; 
+        margin-bottom: 30px;
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    }
+    .avg-rating .stars { font-size: 24px; }
+    
+    .review-card { 
+        background: #f8f9fa; 
+        border-left: 5px solid #667eea; 
+        padding: 25px; 
+        margin-bottom: 20px; 
+        border-radius: 10px; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: transform 0.2s;
+    }
+    .review-card:hover { transform: translateX(5px); }
+    
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .review-stars { font-size: 20px; }
+    .review-date { color: #7f8c8d; font-size: 14px; font-weight: 600; }
+    .review-comment { color: #495057; line-height: 1.8; font-size: 15px; }
+    
+    /* Add Review Form */
+    .add-review-form { 
+        background: #f0f3ff; 
+        border: 2px solid #667eea; 
+        padding: 35px; 
+        border-radius: 16px; 
+        margin-top: 40px;
+    }
+    .add-review-form h3 { font-size: 24px; font-weight: 700; color: #2c3e50; margin-bottom: 25px; }
+    
+    #starRating { font-size: 40px; cursor: pointer; margin-bottom: 10px; }
+    #starRating span { transition: all 0.2s; }
+    #starRating span:hover { transform: scale(1.2); }
+    
+    textarea { 
+        width: 100%; 
+        padding: 15px; 
+        border: 2px solid #e9ecef; 
+        border-radius: 10px; 
+        font-family: Arial, sans-serif; 
+        font-size: 15px; 
+        resize: vertical;
+        transition: border 0.2s;
+    }
+    textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+    
+    .no-reviews { 
+        text-align: center; 
+        padding: 60px 20px; 
+        color: #7f8c8d; 
+        font-size: 18px; 
+        background: #f8f9fa; 
+        border-radius: 10px;
+    }
+    
+    .login-prompt { 
+        text-align: center; 
+        padding: 40px; 
+        background: #fff3cd; 
+        border: 2px solid #ffc107; 
+        border-radius: 12px; 
+        color: #856404; 
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .back-link { 
+        display: inline-block; 
+        margin-top: 40px; 
+        color: #667eea; 
+        font-weight: 600; 
+        font-size: 16px; 
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .back-link:hover { color: #764ba2; transform: translateX(-5px); }
+    
+    /* Alert Messages */
+    .alert-message {
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 1200px;
+        border: 2px solid;
+        text-align: center;
+        font-weight: 600;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        animation: slideDown 0.3s ease;
+    }
+    
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border-color: #28a745;
+    }
+    
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border-color: #dc3545;
+    }
+    
+    @@keyframes slideDown {
+        from { top: -100px; opacity: 0; }
+        to { top: 20px; opacity: 1; }
+    }
+    
+    @@media (max-width: 968px) {
+        .details-grid { grid-template-columns: 1fr; }
+        .booking-card { position: relative; top: 0; }
+        .info-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<!-- Alert Messages -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert-message alert-success" id="alertMessage">
+        ✅ @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert-message alert-error" id="alertMessage">
+        ❌ @TempData["Error"]
+    </div>
+}
+
+<div class="details-container">
+    
+    <!-- Header -->
+    <div class="trip-header">
+        <h1 class="trip-title">@Model.PackageName</h1>
+        <div class="trip-location">
+            <span>📍</span>
+            <span>@Model.Destination, @Model.Country</span>
+        </div>
+    </div>
+
+    <!-- Hero Image -->
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        <img src="@Model.ImagePath" alt="@Model.PackageName" class="trip-hero-image" />
+    }
+    else
+    {
+        <div class="trip-hero-placeholder">🌍</div>
+    }
+
+    <!-- Grid Layout -->
+    <div class="details-grid">
+        
+        <!-- Left Column -->
+        <div>
+            
+            <!-- Trip Info -->
+            <div class="info-section">
+                <h2>📋 Trip Information</h2>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">📅 Start Date</div>
+                        <div class="info-value">@Model.StartDate.ToString("MMM dd, yyyy")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">🗓️ End Date</div>
+                        <div class="info-value">@Model.EndDate.ToString("MMM dd, yyyy")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">⏱️ Duration</div>
+                        <div class="info-value">@((Model.EndDate - Model.StartDate).Days) days</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">🏷️ Package Type</div>
+                        <div class="info-value">@Model.PackageType</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">👶 Minimum Age</div>
+                        <div class="info-value">@Model.MinAge years</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">🏠 Total Rooms</div>
+                        <div class="info-value">@Model.TotalRooms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <div class="info-section">
+                    <h2>📝 Description</h2>
+                    <div class="description-box">@Model.Description</div>
+                </div>
+            }
+
+        </div>
+
+        <!-- Right Column - Booking Card -->
+        <div>
+            <div class="booking-card">
+                
+                <!-- Price -->
+                <div class="price-section">
+                    <div class="price-label">Price per Person</div>
+                    @if (Model.DiscountPrice.HasValue && (!Model.DiscountEndDate.HasValue || Model.DiscountEndDate.Value.Date >= DateTime.Now.Date))
+                    {
+                        <div class="price-original">$@Model.BasePrice</div>
+                        <div class="price-current">$@Model.DiscountPrice.Value</div>
+                        <div class="sale-badge">🔥 ON SALE</div>
+                        @if (Model.DiscountEndDate.HasValue)
+                        {
+                            <div style="font-size: 13px; margin-top: 8px; opacity: 0.9;">Until @Model.DiscountEndDate.Value.ToString("MMM dd, yyyy")</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="price-current">$@Model.BasePrice</div>
+                    }
+                </div>
+
+                <!-- Rooms Status -->
+                @if (isFull)
+                {
+                    <div class="rooms-status rooms-full">
+                        🚫 SOLD OUT - No rooms available
+                    </div>
+                }
+                else if (availableRooms <= 3)
+                {
+                    <div class="rooms-status rooms-warning">
+                        ⚠️ Only @availableRooms rooms left!
+                    </div>
+                }
+                else
+                {
+                    <div class="rooms-status rooms-available">
+                        ✅ @availableRooms / @Model.TotalRooms rooms available
+                    </div>
+                }
+
+                <!-- Action Buttons -->
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="action-buttons">
+                        
+                        @if (!isFull)
+                        {
+                            <!-- Buy Now -->
+                            <a href="/Bookings/BuyNow?tripId=@Model.TripId" class="btn-action btn-primary">
+                                <span>💳</span>
+                                <span>Buy Now</span>
+                            </a>
+
+                            <!-- Add to Cart -->
+                            <form method="post" action="/Cart/Add" style="margin: 0;">
+                                <input type="hidden" name="tripId" value="@Model.TripId" />
+                                <button type="submit" class="btn-action btn-secondary">
+                                    <span>🛒</span>
+                                    <span>Add to Cart</span>
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <!-- Join Waiting List -->
+                            <a href="/WaitingList/Add?tripId=@Model.TripId" class="btn-action btn-primary">
+                                <span>⏳</span>
+                                <span>Join Waiting List</span>
+                            </a>
+                        }
+
+                        <!-- Add to Wish List -->
+                        <a href="/WishList/Add?tripId=@Model.TripId" class="btn-action btn-tertiary">
+                            <span>❤️</span>
+                            <span>Add to Wish List</span>
+                        </a>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="login-prompt">
+                        🔒 Please <a href="/Identity/Account/Login" style="color: #667eea; font-weight: 700;">log in</a> to book this trip
+                    </div>
+                }
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        
+        @{
+            var reviews = ViewBag.Reviews as List<Review> ?? new List<Review>();
+            double avgRating = reviews.Count > 0 ? reviews.Average(r => r.Rating) : 0;
+        }
+
+        <h2 class="reviews-header">⭐ Reviews (@reviews.Count)</h2>
+
+        @if (reviews.Count > 0)
+        {
+            <div class="avg-rating">
+                <span class="stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= Math.Round(avgRating))
+                        {
+                            <span>⭐</span>
+                        }
+                        else
+                        {
+                            <span style="opacity: 0.3;">☆</span>
+                        }
+                    }
+                </span>
+                <span style="font-size: 24px;">@avgRating.ToString("0.0") / 5.0</span>
+            </div>
+
+            @foreach (var r in reviews)
+            {
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-stars">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= r.Rating)
+                                {
+                                    <span style="color: #ffc107;">⭐</span>
+                                }
+                                else
+                                {
+                                    <span style="color: #ddd;">☆</span>
+                                }
+                            }
+                        </div>
+                        <div class="review-date">@r.CreatedAt.ToString("dd MMM yyyy")</div>
+                    </div>
+                    <div class="review-comment">"@r.Comment"</div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-reviews">
+                <div style="font-size: 60px; margin-bottom: 15px;">📝</div>
+                <p>No reviews yet. Be the first to review this trip!</p>
+            </div>
+        }
+
+        <!-- Add Review Form -->
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <div class="add-review-form">
+                <h3>✍️ Write a Review</h3>
+
+                <form method="post" action="/Reviews/Add" id="reviewForm">
+                    <input type="hidden" name="tripId" value="@Model.TripId" />
+
+                    <div style="margin-bottom: 25px;">
+                        <label style="font-weight: 700; display: block; margin-bottom: 12px; color: #2c3e50;">Your Rating:</label>
+                        <div id="starRating">
+                            <span data-value="1">☆</span>
+                            <span data-value="2">☆</span>
+                            <span data-value="3">☆</span>
+                            <span data-value="4">☆</span>
+                            <span data-value="5">☆</span>
+                        </div>
+                        <input type="hidden" name="rating" id="ratingInput" required />
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <label style="font-weight: 700; display: block; margin-bottom: 12px; color: #2c3e50;">Your Review:</label>
+                        <textarea name="comment" id="commentInput" rows="5" required placeholder="Share your experience..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-action btn-primary" style="width: auto; padding: 14px 40px;">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 10px; margin-top: 30px;">
+                <p style="color: #7f8c8d; font-size: 16px;">
+                    <a href="/Identity/Account/Login" style="color: #667eea; font-weight: 700; text-decoration: underline;">Log in</a> to write a review
+                </p>
+            </div>
+        }
+
+    </div>
+
+    <a href="/Trips" class="back-link">← Back to Trips</a>
+
+</div>
+<script>
+    // Hide alert after 3 seconds
+    const alertMessage = document.getElementById('alertMessage');
+    if (alertMessage) {
+        setTimeout(() => {
+            alertMessage.style.display = 'none';
+        }, 3000);
+    }
+
+    // Review form script
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('#starRating span');
+        const ratingInput = document.getElementById('ratingInput');
+        
+        if (!stars || !ratingInput) return;
+        
+        let selectedRating = 0;
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = this.getAttribute('data-value');
+                ratingInput.value = selectedRating;
+                updateStars(selectedRating);
+            });
+
+            star.addEventListener('mouseover', function() {
+                updateStars(this.getAttribute('data-value'));
+            });
+        });
+
+        document.getElementById('starRating').addEventListener('mouseout', function() {
+            updateStars(selectedRating);
+        });
+
+        function updateStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.textContent = '⭐';
+                    star.style.color = '#ffc107';
+                } else {
+                    star.textContent = '☆';
+                    star.style.color = '#ddd';
+                }
+            });
+        }
+        
+        // Form validation
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function(e) {
+                const rating = ratingInput.value;
+                const commentInput = document.getElementById('commentInput');
+                const comment = commentInput ? commentInput.value : '';
+                
+                if (!rating || rating === '' || rating === '0') {
+                    e.preventDefault();
+                    alert('Please select a rating!');
+                    return false;
+                }
+                
+                if (!comment || comment.trim() === '') {
+                    e.preventDefault();
+                    alert('Please write a review!');
+                    return false;
+                }
+            });
+        }
+    });
+</script>

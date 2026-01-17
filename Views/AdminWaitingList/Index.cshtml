@@ -1,0 +1,50 @@
+@model List<dynamic>
+
+<h2>Manage Waiting Lists</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model.Count == 0)
+{
+    <p>No trips have active waiting lists.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Trip Name</th>
+                <th>Destination</th>
+                <th>Start Date</th>
+                <th>People Waiting</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Trip.PackageName</td>
+                    <td>@item.Trip.Destination, @item.Trip.Country</td>
+                    <td>@item.Trip.StartDate.ToString("MMM dd, yyyy")</td>
+                    <td>@item.WaitingCount</td>
+                    <td>
+                        <a href="@Url.Action("Details", new { tripId = item.Trip.TripId })" class="btn btn-sm btn-info">View List</a>
+                        <form method="post" action="@Url.Action("Clear", new { tripId = item.Trip.TripId })" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Clear entire waiting list?')">Clear All</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Back to Home page</a>

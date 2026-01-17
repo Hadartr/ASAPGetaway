@@ -1,0 +1,76 @@
+@model ASAPGetaway.Models.Trip
+
+<h1>Admin - Pricing</h1>
+
+<p>
+    TripId: <strong>@Model.TripId</strong><br />
+    Package: <strong>@Model.PackageName</strong><br />
+    Destination: <strong>@Model.Destination</strong> , <strong>@Model.Country</strong>
+</p>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div style="color:red;">
+        <p><strong>Please fix the errors below.</strong></p>
+    </div>
+}
+
+<form method="post" action="/AdminTrips/Pricing">
+
+    <input type="hidden" name="tripId" value="@Model.TripId" />
+
+    <div>
+        <label>Base Price:</label><br />
+        <input type="number" step="0.01" name="basePrice" value="@Model.BasePrice" />
+        @Html.ValidationMessage("basePrice")
+    </div>
+
+    <br />
+
+    <div>
+        <label>Discount Price (optional):</label><br />
+        <input type="number" step="0.01" name="discountPrice"
+               value="@(Model.DiscountPrice.HasValue ? Model.DiscountPrice.Value.ToString() : "")" />
+        @Html.ValidationMessage("discountPrice")
+    </div>
+
+    <br />
+
+    <div>
+        <label>Discount End Date (required if discount exists):</label><br />
+        <input type="date" name="discountEndDate"
+               value="@(Model.DiscountEndDate.HasValue ? Model.DiscountEndDate.Value.ToString("yyyy-MM-dd") : "")" />
+        @Html.ValidationMessage("discountEndDate")
+    </div>
+
+    <br />
+
+    <button type="submit">Save Pricing</button>
+</form>
+
+<hr />
+
+<h3>How it will be shown to users</h3>
+
+@if (Model.DiscountPrice.HasValue && (!Model.DiscountEndDate.HasValue || Model.DiscountEndDate.Value.Date >= DateTime.Now.Date))
+{
+    <p>
+        <span style="text-decoration: line-through;">@Model.BasePrice</span>
+        <strong style="margin-left:10px;">@Model.DiscountPrice.Value</strong>
+    </p>
+
+    <p>
+        Discount until: @(Model.DiscountEndDate.HasValue ? Model.DiscountEndDate.Value.ToString("yyyy-MM-dd") : "-")
+    </p>
+}
+else
+{
+    <p>
+        <strong>@Model.BasePrice</strong>
+        <span>(No active discount)</span>
+    </p>
+}
+
+<p>
+    <a href="/AdminTrips">← Back to Admin Trips</a>
+</p>

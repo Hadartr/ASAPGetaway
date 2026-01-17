@@ -1,0 +1,178 @@
+@model List<ASAPGetaway.Models.Trip>
+
+<style>
+    .wishlist-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    .wishlist-header { text-align: center; margin-bottom: 30px; color: #333; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .wishlist-header h1 { margin: 0; }
+    
+    .btn-add-all { 
+        padding: 15px 30px; 
+        background: linear-gradient(135deg, #ff6b6b, #ee5a6f); 
+        color: white; 
+        border: none; 
+        border-radius: 10px; 
+        font-weight: 700; 
+        font-size: 16px; 
+        cursor: pointer; 
+        transition: transform 0.2s; 
+    }
+    
+    .btn-add-all:hover { transform: scale(1.05); }
+    
+    .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; margin-bottom: 40px; }
+    
+    .wishlist-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; position: relative; border-left: 5px solid #e91e63; }
+    .wishlist-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+    
+    .wishlist-image { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .wishlist-image-placeholder { width: 100%; height: 200px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; color: white; }
+    
+    .wishlist-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    
+    .heart-badge { position: absolute; top: 15px; right: 15px; background: #e91e63; color: white; padding: 10px; border-radius: 50%; font-size: 20px; z-index: 10; box-shadow: 0 3px 10px rgba(233, 30, 99, 0.4); }
+    
+    .wishlist-title { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 10px; }
+    .wishlist-id { font-size: 13px; color: #999; margin-bottom: 15px; }
+    
+    .wishlist-info { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; }
+    .wishlist-info-row { display: flex; justify-content: space-between; align-items: center; }
+    .wishlist-info-label { color: #666; font-weight: 500; }
+    .wishlist-info-value { color: #333; font-weight: 600; }
+    
+    .wishlist-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
+    
+    .btn-wishlist { position: relative; width: 100%; height: 50px; padding: 0; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-size: 22px; text-decoration: none; background: white; color: #666; }
+    .btn-wishlist::after { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-8px); background: rgba(0, 0, 0, 0.85); color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; }
+    .btn-wishlist:hover::after { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+    .btn-wishlist:hover { background: #f5f5f5; border-color: #999; transform: scale(1.03); }
+    
+    .empty-wishlist { text-align: center; padding: 60px 20px; color: #999; font-size: 18px; }
+    
+    .message { padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600; }
+    .message-success { background: #d4edda; color: #155724; }
+    .message-info { background: #d1ecf1; color: #0c5460; }
+    
+    @@media (max-width: 768px) { 
+        .wishlist-grid { grid-template-columns: 1fr; }
+        .wishlist-header { flex-direction: column; gap: 15px; }
+    }
+</style>
+
+<div class="wishlist-container">
+    
+    <div class="wishlist-header">
+        <h1>💝 My Wish List</h1>
+        @if (Model.Count > 0)
+        {
+            <form method="post" action="/WishList/AddAllToCart" style="margin: 0;">
+                <button type="submit" class="btn-add-all">🛒 Add All to Cart (@Model.Count)</button>
+            </form>
+        }
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="message message-success">
+            ✅ @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="message message-info">
+            ℹ️ @TempData["Message"]
+        </div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-wishlist">
+            <div style="font-size: 60px; margin-bottom: 20px;">💔</div>
+            <p>Your wish list is empty.</p>
+            <p><a href="/Trips" style="color: #e91e63; font-weight: 600;">Explore our amazing trips!</a></p>
+        </div>
+    }
+    else
+    {
+        <div class="wishlist-grid">
+            @foreach (var trip in Model)
+            {
+                <div class="wishlist-card">
+                    
+                    <div class="heart-badge">❤️</div>
+                    
+                    @if (!string.IsNullOrEmpty(trip.ImagePath))
+                    {
+                        <img src="@trip.ImagePath" alt="@trip.PackageName" class="wishlist-image" />
+                    }
+                    else
+                    {
+                        <div class="wishlist-image-placeholder">🌍</div>
+                    }
+
+                    <div class="wishlist-content">
+                        
+                        <h3 class="wishlist-title">@trip.PackageName</h3>
+                        <p class="wishlist-id">@trip.Destination, @trip.Country</p>
+
+                        <div class="wishlist-info">
+                            <div class="wishlist-info-row">
+                                <span class="wishlist-info-label">📅 Travel Date</span>
+                                <span class="wishlist-info-value">@trip.StartDate.ToString("MMM dd, yyyy")</span>
+                            </div>
+                            <div class="wishlist-info-row">
+                                <span class="wishlist-info-label">💰 Price</span>
+                                <span class="wishlist-info-value" style="color: #28a745; font-weight: 700;">
+                                    @if (trip.IsOnSale && trip.DiscountPrice.HasValue)
+                                    {
+                                        <span style="text-decoration: line-through; color: #999; margin-right: 8px;">$@trip.BasePrice</span>
+                                        <span>$@trip.DiscountPrice.Value</span>
+                                    }
+                                    else
+                                    {
+                                        <span>$@trip.BasePrice</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="wishlist-info-row">
+                                <span class="wishlist-info-label">⏱️ Duration</span>
+                                <span class="wishlist-info-value">@((trip.EndDate - trip.StartDate).Days) days</span>
+                            </div>
+                        </div>
+
+                        <div class="wishlist-actions">
+                            
+                            <a href="/Trips/Details/@trip.TripId" class="btn-wishlist" data-tooltip="View Details">
+                                👁️
+                            </a>
+
+                            <a href="/Bookings/Create?tripId=@trip.TripId" class="btn-wishlist" data-tooltip="Book Now">
+                                🎫
+                            </a>
+
+                            <form method="post" action="/WishList/AddToCart" style="margin: 0;">
+                                <input type="hidden" name="tripId" value="@trip.TripId" />
+                                <button type="submit" class="btn-wishlist" data-tooltip="Add to Cart">
+                                    🛒
+                                </button>
+                            </form>
+
+                            <form method="post" action="/WishList/Remove" style="margin: 0;">
+                                <input type="hidden" name="tripId" value="@trip.TripId" />
+                                <button type="submit" class="btn-wishlist" data-tooltip="Remove" onclick="return confirm('Remove from wish list?')">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>
+
+<p style="text-align: center; margin-top: 30px;">
+    <a href="/Trips" style="color: #e91e63; font-weight: 600; font-size: 16px;">← Back to Trips</a>
+</p>

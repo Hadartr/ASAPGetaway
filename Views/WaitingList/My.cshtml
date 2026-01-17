@@ -1,0 +1,239 @@
+@model List<ASAPGetaway.Models.WaitingListItem>
+
+<style>
+    .waiting-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+    .waiting-header { text-align: center; margin-bottom: 40px; }
+    .waiting-header h1 { font-size: 42px; font-weight: 800; color: #2c3e50; margin-bottom: 10px; }
+    .waiting-header p { font-size: 16px; color: #7f8c8d; }
+    
+    .waiting-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; margin-bottom: 40px; }
+    
+    .waiting-card { 
+        background: white; 
+        border-radius: 16px; 
+        overflow: hidden; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+        transition: transform 0.3s, box-shadow 0.3s; 
+        display: flex; 
+        flex-direction: column; 
+        position: relative; 
+        border-left: 5px solid #f39c12;
+    }
+    
+    .waiting-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    
+    .waiting-image { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .waiting-image-placeholder { width: 100%; height: 200px; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; color: white; }
+    
+    .waiting-badge { position: absolute; top: 15px; right: 15px; background: #f39c12; color: white; padding: 10px 16px; border-radius: 20px; font-weight: 700; font-size: 14px; z-index: 10; box-shadow: 0 3px 10px rgba(243, 156, 18, 0.4); }
+    
+    .waiting-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+    
+    .waiting-title { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 8px; }
+    .waiting-subtitle { font-size: 14px; color: #7f8c8d; margin-bottom: 20px; }
+    
+    .waiting-info { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 12px; 
+        margin-bottom: 20px; 
+        padding: 18px; 
+        background: #fff8e1; 
+        border-radius: 10px; 
+        border-left: 4px solid #f39c12;
+    }
+    
+    .waiting-info-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+    .waiting-info-label { color: #666; font-weight: 500; }
+    .waiting-info-value { color: #333; font-weight: 700; }
+    
+    .position-large { font-size: 32px; font-weight: 800; color: #f39c12; text-align: center; margin: 15px 0; }
+    
+    .waiting-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+    
+    .btn-waiting { 
+        position: relative; 
+        width: 100%; 
+        height: 50px; 
+        padding: 0; 
+        border: 2px solid #e0e0e0; 
+        border-radius: 10px; 
+        cursor: pointer; 
+        transition: all 0.2s; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 22px; 
+        text-decoration: none; 
+        background: white; 
+        color: #666; 
+    }
+    
+    .btn-waiting::after { 
+        content: attr(data-tooltip); 
+        position: absolute; 
+        bottom: 100%; 
+        left: 50%; 
+        transform: translateX(-50%) translateY(-8px); 
+        background: rgba(0, 0, 0, 0.85); 
+        color: white; 
+        padding: 6px 12px; 
+        border-radius: 6px; 
+        font-size: 13px; 
+        white-space: nowrap; 
+        opacity: 0; 
+        pointer-events: none; 
+        transition: opacity 0.3s; 
+        z-index: 1000; 
+    }
+    
+    .btn-waiting:hover::after { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+    .btn-waiting:hover { background: #f5f5f5; border-color: #999; transform: scale(1.03); }
+    
+    .empty-waiting { text-align: center; padding: 80px 20px; color: #7f8c8d; }
+    .empty-waiting-icon { font-size: 80px; margin-bottom: 20px; }
+    
+    .alert-info { background: #d1ecf1; color: #0c5460; padding: 16px 20px; border-radius: 10px; margin-bottom: 30px; text-align: center; font-weight: 600; border-left: 4px solid #17a2b8; }
+    
+    @@media (max-width: 768px) { .waiting-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="waiting-container">
+    
+    <div class="waiting-header">
+        <h1>⏳ My Waiting List</h1>
+        <p>You'll be notified when a spot becomes available</p>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert-info">
+            ℹ️ @TempData["Message"]
+        </div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-waiting">
+            <div class="empty-waiting-icon">📋</div>
+            <h2>You're not on any waiting lists</h2>
+            <p>Browse trips and join a waiting list when a trip is fully booked</p>
+            <p style="margin-top: 20px;">
+                <a href="/Trips" style="color: #f39c12; font-weight: 600; font-size: 16px;">← Explore Trips</a>
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="waiting-grid">
+            @foreach (var item in Model)
+            {
+                var trip = item.Trip;
+                
+                // ✅ קבלת מיקום אמיתי מהשרת
+                int position = 0;
+                
+                if (ViewBag.Positions != null)
+                {
+                    var positionsDict = ViewBag.Positions as Dictionary<int, int>;
+                    if (positionsDict != null && positionsDict.ContainsKey(item.TripId))
+                    {
+                        position = positionsDict[item.TripId];
+                    }
+                }
+                
+                // אם עדיין 0, תן ערך ברירת מחדל
+                if (position == 0)
+                {
+                    position = 1;
+                }
+                
+                <div class="waiting-card">
+                    
+                    <div class="waiting-badge">#@position in line</div>
+                    
+                    @if (trip != null)
+                    {
+                        if (!string.IsNullOrEmpty(trip.ImagePath))
+                        {
+                            <img src="@trip.ImagePath" alt="@trip.PackageName" class="waiting-image" />
+                        }
+                        else
+                        {
+                            <div class="waiting-image-placeholder">⏳</div>
+                        }
+                    }
+
+                    <div class="waiting-content">
+                        
+                        @if (trip != null)
+                        {
+                            <h3 class="waiting-title">@trip.PackageName</h3>
+                            <p class="waiting-subtitle">📍 @trip.Destination, @trip.Country</p>
+                        }
+                        else
+                        {
+                            <h3 class="waiting-title">Trip #@item.TripId</h3>
+                            <p class="waiting-subtitle">Waiting for availability</p>
+                        }
+
+                        <div class="position-large">Position: #@position</div>
+
+                        <div class="waiting-info">
+                            <div class="waiting-info-row">
+                                <span class="waiting-info-label">📅 Joined</span>
+                                <span class="waiting-info-value">@item.JoinDate.ToString("MMM dd, yyyy")</span>
+                            </div>
+                            <div class="waiting-info-row">
+                                <span class="waiting-info-label">⏱️ Waiting Time</span>
+                                <span class="waiting-info-value">@((DateTime.Now - item.JoinDate).Days) days</span>
+                            </div>
+                            @if (trip != null)
+                            {
+                                <div class="waiting-info-row">
+                                    <span class="waiting-info-label">📅 Departure</span>
+                                    <span class="waiting-info-value">@trip.StartDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            }
+                            <div class="waiting-info-row">
+                                <span class="waiting-info-label">🔔 Estimate</span>
+                                <span class="waiting-info-value">
+                                    @if (position == 1)
+                                    {
+                                        <span style="color: #28a745; font-weight: 700;">You're next!</span>
+                                    }
+                                    else if (position <= 3)
+                                    {
+                                        <span>1-2 weeks</span>
+                                    }
+                                    else
+                                    {
+                                        <span>2-4 weeks</span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="waiting-actions">
+                            <a href="/Trips/Details/@item.TripId" class="btn-waiting" data-tooltip="View Trip">
+                                👁️
+                            </a>
+                            <form method="post" action="/WaitingList/Remove" style="margin: 0;">
+                                <input type="hidden" name="tripId" value="@item.TripId" />
+                                <button type="submit" class="btn-waiting" data-tooltip="Leave Waiting List" onclick="return confirm('Leave this waiting list?')">
+                                    ❌
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>
+
+<p style="text-align: center; margin-top: 30px;">
+    <a href="/Trips" style="color: #f39c12; font-weight: 600; font-size: 16px;">← Back to Trips</a>
+</p>
