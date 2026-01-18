@@ -6,7 +6,7 @@ A web application for browsing and booking travel packages built with ASP.NET Co
 
 ## About The Project
 
-This project was developed as part of the Computer Communications & Networks course.  
+This project was developed as part of the Introduction to Computer Communications course.  
 ASAPGetaway allows users to browse destinations, book trips, manage bookings, and write reviews.  
 Admin users can manage trips, users, and waiting lists through a dedicated panel.
 
@@ -180,7 +180,7 @@ Admins have a special panel to:
 ## Built By
 
 **Hadar & Ori**  
-Computer Communications & Networks Course  
+Introduction to Computer Communications course.  
 2025-2026
 
 ---
