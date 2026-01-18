@@ -68,7 +68,7 @@ Built with ASP.NET Core MVC 8.0, SQL Server, and Bootstrap 5.
 2. Open `appsettings.json` and update the database connection string
 3. Open SQL Server Management Studio and run `ASAPGetawayDB.sql`
 4. Build and run the project from Visual Studio
-5. Navigate to https://localhost:5001
+5. Navigate to https://localhost:7171
 
 **Default admin credentials:**
 - Email: admin@asapgetaway.com
