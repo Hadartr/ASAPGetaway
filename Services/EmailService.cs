@@ -39,13 +39,13 @@ namespace ASAPGetaway.Services
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
 
-                Console.WriteLine($"✅ EMAIL SENT to {toEmail} - Subject: {subject}");
+                Console.WriteLine($"EMAIL SENT to {toEmail} - Subject: {subject}");
                 
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Email error: {ex.Message}");
+                Console.WriteLine($" Email error: {ex.Message}");
                 return false;
             }
         }
@@ -91,7 +91,7 @@ namespace ASAPGetaway.Services
                     <p>We will notify you by email as soon as a spot becomes available.</p>
                     <p><strong>Estimated wait time:</strong> {(position <= 3 ? "1-2 weeks" : "2-4 weeks")}</p>
                     <p>Thank you for your patience!</p>
-                    <p><a href='https://localhost:5001/WaitingList/My' style='background-color: #f39c12; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;'>View My Waiting List</a></p>
+                    <p><a href='https://localhost:7171/WaitingList/My' style='background-color: #f39c12; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;'>View My Waiting List</a></p>
                     <p style='color: #888; font-size: 0.9em;'>This is an automated email. Please do not reply.</p>
                 </body>
                 </html>
@@ -116,7 +116,7 @@ namespace ASAPGetaway.Services
                     </div>
                     <p><strong>⚠️ Important:</strong> Please book within 24 hours or you'll lose your spot.</p>
                     <p style='text-align: center; margin: 30px 0;'>
-                        <a href='https://localhost:5001/Bookings/Create?tripId={tripId}' style='background-color: #28a745; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px;'>Book Now →</a>
+                        <a href='https://localhost:7171/Bookings/Create?tripId={tripId}' style='background-color: #28a745; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px;'>Book Now →</a>
                     </p>
                     <p>Don't miss this opportunity!</p>
                     <p style='color: #888; font-size: 0.9em;'>This is an automated email. Please do not reply.</p>

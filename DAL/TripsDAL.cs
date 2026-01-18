@@ -34,7 +34,7 @@ namespace ASAPGetaway.DAL
             var trips = new List<Trip>();
             string sql = @"
 SELECT TripId, PackageName, Destination, Country, StartDate, EndDate,
-       BasePrice, DiscountPrice, DiscountEndDate, TotalRooms, MinAge,
+       BasePrice, DiscountPrice, DiscountStartDate, DiscountEndDate, TotalRooms, MinAge,
        PackageType, Description, ImagePath, PopularityScore, IsActive
 FROM Trips
 WHERE IsActive = 1";
@@ -47,7 +47,7 @@ WHERE IsActive = 1";
                 sql += " AND PackageType = @PackageType";
 
             if (onSaleOnly)
-                sql += " AND DiscountPrice IS NOT NULL AND DiscountPrice < BasePrice";
+                sql += " AND DiscountPrice IS NOT NULL AND DiscountPrice < BasePrice AND DiscountStartDate IS NOT NULL AND DiscountEndDate IS NOT NULL AND GETDATE() >= DiscountStartDate AND GETDATE() <= DiscountEndDate";
 
             string effectivePrice = @"CASE 
                 WHEN DiscountPrice IS NOT NULL AND (DiscountEndDate IS NULL OR DiscountEndDate >= GETDATE())
@@ -105,7 +105,7 @@ WHERE IsActive = 1";
             var trips = new List<Trip>();
             string sql = @"
 SELECT TripId, PackageName, Destination, Country, StartDate, EndDate,
-       BasePrice, DiscountPrice, DiscountEndDate, TotalRooms, MinAge,
+       BasePrice, DiscountPrice, DiscountStartDate, DiscountEndDate, TotalRooms, MinAge,
        PackageType, Description, ImagePath, PopularityScore, IsActive
 FROM Trips
 WHERE IsActive = 1
@@ -133,7 +133,7 @@ ORDER BY StartDate ASC";
             Trip? trip = null;
             string sql = @"
 SELECT TripId, PackageName, Destination, Country, StartDate, EndDate,
-       BasePrice, DiscountPrice, DiscountEndDate, TotalRooms, MinAge,
+       BasePrice, DiscountPrice, DiscountStartDate, DiscountEndDate, TotalRooms, MinAge,
        PackageType, Description, ImagePath, PopularityScore, IsActive
 FROM Trips
 WHERE TripId = @TripId";
@@ -172,7 +172,7 @@ WHERE TripId = @TripId";
             var trips = new List<Trip>();
             string sql = @"
 SELECT TripId, PackageName, Destination, Country, StartDate, EndDate,
-       BasePrice, DiscountPrice, DiscountEndDate, TotalRooms, MinAge,
+       BasePrice, DiscountPrice, DiscountStartDate, DiscountEndDate, TotalRooms, MinAge,
        PackageType, Description, ImagePath, PopularityScore, IsActive
 FROM Trips
 ORDER BY TripId DESC";
@@ -197,10 +197,10 @@ ORDER BY TripId DESC";
             string sql = @"
 INSERT INTO Trips
 (PackageName, Destination, Country, StartDate, EndDate, BasePrice, DiscountPrice, 
- DiscountEndDate, TotalRooms, MinAge, PackageType, Description, ImagePath, PopularityScore, IsActive)
+ DiscountStartDate, DiscountEndDate, TotalRooms, MinAge, PackageType, Description, ImagePath, PopularityScore, IsActive)
 VALUES
 (@PackageName, @Destination, @Country, @StartDate, @EndDate, @BasePrice, @DiscountPrice,
- @DiscountEndDate, @TotalRooms, @MinAge, @PackageType, @Description, @ImagePath, @PopularityScore, @IsActive);
+ @DiscountStartDate, @DiscountEndDate, @TotalRooms, @MinAge, @PackageType, @Description, @ImagePath, @PopularityScore, @IsActive);
 SELECT SCOPE_IDENTITY();";
 
             using (SqlConnection conn = new SqlConnection(_connStr))
@@ -219,7 +219,7 @@ SELECT SCOPE_IDENTITY();";
 UPDATE Trips
 SET PackageName = @PackageName, Destination = @Destination, Country = @Country,
     StartDate = @StartDate, EndDate = @EndDate, BasePrice = @BasePrice,
-    DiscountPrice = @DiscountPrice, DiscountEndDate = @DiscountEndDate,
+    DiscountPrice = @DiscountPrice, DiscountStartDate = @DiscountStartDate, DiscountEndDate = @DiscountEndDate,
     TotalRooms = @TotalRooms, MinAge = @MinAge, PackageType = @PackageType,
     Description = @Description, ImagePath = @ImagePath,
     PopularityScore = @PopularityScore, IsActive = @IsActive
@@ -275,6 +275,8 @@ WHERE TripId = @TripId";
             cmd.Parameters.AddWithValue("@BasePrice", trip.BasePrice);
             cmd.Parameters.AddWithValue("@DiscountPrice",
                 trip.DiscountPrice.HasValue ? (object)trip.DiscountPrice.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@DiscountStartDate",
+                trip.DiscountStartDate.HasValue ? (object)trip.DiscountStartDate.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@DiscountEndDate",
                 trip.DiscountEndDate.HasValue ? (object)trip.DiscountEndDate.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@TotalRooms", trip.TotalRooms);
@@ -302,6 +304,8 @@ WHERE TripId = @TripId";
                 BasePrice = reader.GetDecimal(reader.GetOrdinal("BasePrice")),
                 DiscountPrice = reader.IsDBNull(reader.GetOrdinal("DiscountPrice")) 
                     ? null : reader.GetDecimal(reader.GetOrdinal("DiscountPrice")),
+                DiscountStartDate = reader.IsDBNull(reader.GetOrdinal("DiscountStartDate")) 
+                    ? null : reader.GetDateTime(reader.GetOrdinal("DiscountStartDate")),
                 DiscountEndDate = reader.IsDBNull(reader.GetOrdinal("DiscountEndDate")) 
                     ? null : reader.GetDateTime(reader.GetOrdinal("DiscountEndDate")),
                 TotalRooms = reader.GetInt32(reader.GetOrdinal("TotalRooms")),
