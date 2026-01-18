@@ -1,32 +1,43 @@
 # ASAPGetaway - Travel Booking System
 
-ASP.NET Core MVC web application for browsing and booking travel packages worldwide.
-
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-8.0-blue)
-![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-red)
+A web application for browsing and booking travel packages built with ASP.NET Core MVC.
 
 ---
 
-## Quick Start
+## About The Project
 
-### Prerequisites
+This project was developed as part of the Computer Communications & Networks course.  
+ASAPGetaway allows users to browse destinations, book trips, manage bookings, and write reviews.  
+Admin users can manage trips, users, and waiting lists through a dedicated panel.
+
+---
+
+## Getting Started
+
+### What You Need
+
 - .NET 8.0 SDK
-- SQL Server 2019+
+- SQL Server 2019 or newer
 - SQL Server Management Studio (SSMS)
 - Visual Studio 2022
 
-### Installation
+### How To Run
 
-1. **Clone & Build**
+1. **Clone the project**
 ```bash
 git clone https://github.com/yourusername/ASAPGetaway.git
 cd ASAPGetaway
+```
+
+2. **Install dependencies**
+```bash
 dotnet restore
 dotnet build
 ```
 
-2. **Configure Database**  
-Edit `appsettings.json`:
+3. **Setup database**
+
+Edit `appsettings.json` and update your connection string if needed:
 ```json
 {
   "ConnectionStrings": {
@@ -35,57 +46,54 @@ Edit `appsettings.json`:
 }
 ```
 
-3. **Create Database**
-```bash
-dotnet ef database update
-```
+4. **Create database**
 
-4. **Seed Data**  
-Open SSMS and run `ASAPGetawayDB.sql`
+Open SSMS and run the `ASAPGetawayDB.sql` file.  
+This creates the database and adds sample data (trips, users, bookings).
 
-5. **Run**
+5. **Run the app**
 ```bash
 dotnet run
 ```
 
-Navigate to `https://localhost:7001`
+Open your browser and go to: `https://localhost:7001`
+
+---
+
+## Login Info
+
+**Admin account:**
+- Email: admin@asapgetaway.com
+- Password: Admin123!
+
+**Test users:**
+- HadarTr@email.com
+- OriOh@email.com
+- Alona@email.com
+- Pedut@email.com
+
+(These users are created by the SQL script. You can also register new users.)
 
 ---
 
 ## Features
 
-### User Features
-- Browse & search 25+ worldwide destinations
-- Shopping cart & secure booking
-- Wish list & waiting list (FIFO)
-- Trip reviews & ratings
-- Email notifications & PDF invoices
+### For Users
+- Browse 25+ destinations worldwide
+- Search and filter trips by destination, price, dates
+- Add trips to cart and checkout
+- View booking history and manage bookings
+- Write reviews and rate trips (1-5 stars)
+- Save trips to wish list
+- Join waiting list for full trips
+- Get email notifications
 
-### Admin Features
-- Full trip management (CRUD)
-- Time-limited discount system (max 7 days)
-- User account management
-- Waiting list management
-- Site reviews monitoring
-
----
-
-## Default Accounts
-
-**Admin:**
-```
-Email: admin@asapgetaway.com
-Password: Admin123!
-```
-
-**Demo Users:**
-```
-HadarTr@email.com
-OriOh@email.com
-Alona@email.com
-Pedut@email.com
-```
-*Demo users have placeholder passwords - use admin account or register new users*
+### For Admins
+- Add, edit, and delete trips
+- Set discounts (max 7 days)
+- View all users and lock/unlock accounts
+- Manage waiting lists for all trips
+- View site reviews
 
 ---
 
@@ -93,80 +101,83 @@ Pedut@email.com
 
 ```
 ASAPGetaway/
-├── Controllers/       # MVC Controllers
-├── Models/           # Data models with validation
-├── DAL/              # Data Access Layer (ADO.NET)
-├── Services/         # Email & background services
-├── Views/            # Razor views
-├── wwwroot/          # Static files
-└── Areas/Identity/   # Authentication
+├── Controllers/       # Handle requests
+├── Models/           # Data classes
+├── DAL/              # Database access (ADO.NET)
+├── Services/         # Email service
+├── Views/            # UI pages
+├── wwwroot/          # CSS, JS, images
+└── Areas/Identity/   # Login pages
 ```
 
 ---
 
-## Database Schema
+## Database Tables
 
-**Main Tables:**
-- **Trips** - Packages with pricing, discounts, capacity
-- **Bookings** - User reservations with status
-- **Reviews** - Trip ratings (1-5 stars)
+- **Trips** - Travel packages with pricing and details
+- **Bookings** - User bookings
+- **Reviews** - Trip reviews
 - **SiteReviews** - General feedback
-- **WaitingList** - FIFO queue for sold-out trips
+- **WaitingList** - Queue for sold-out trips (FIFO)
 - **WishList** - Saved trips
-- **AspNetUsers** - Identity accounts
+- **AspNetUsers** - User accounts
+
+The SQL file includes 25 sample trips, bookings, and reviews so you can test everything.
 
 ---
 
-## Key Features
+## Technologies Used
+
+- ASP.NET Core MVC 8.0
+- C# 12
+- SQL Server
+- ADO.NET for database access
+- ASP.NET Core Identity for authentication
+- Bootstrap 5 for design
+- jQuery for client-side code
+- QuestPDF for invoices
+- MailKit for emails
+
+---
+
+## Main Features Explained
 
 ### Discount System
-- Max 7-day discount periods
-- Automatic price calculation
-- Visual indicators
+Admins can set discounts for up to 7 days. The system automatically calculates the final price.
 
-### Waiting List (FIFO)
-- First In, First Out queue
-- Email notifications when spots open
-- Admin management panel
+### Waiting List
+When a trip is full, users can join a waiting list. It works FIFO (first in, first out).  
+When a spot opens, the first person in line gets notified by email.
 
 ### Admin Panel
-- Trip management
-- User management (lock/unlock)
-- Waiting list management
-- Site reviews
+Admins have a special panel to:
+- Manage all trips (create, edit, delete, set discounts)
+- View and manage all users
+- See waiting lists for all trips and remove people if needed
+- View feedback from users
+
+### Booking Rules
+- Users can have max 3 active bookings
+- Cancellation is allowed based on trip policy
+- Each trip has a capacity (total rooms)
 
 ---
 
 ## Troubleshooting
 
-**Database connection issues:**
-```bash
-dotnet ef database update
-```
+**Can't connect to database?**
+- Check your connection string in appsettings.json
+- Make sure SQL Server is running
 
-**Reset database:**
-```sql
--- In SSMS, run: CreateDatabasel.sql
-```
+**Database doesn't exist?**
+- Run ASAPGetawayDB.sql in SSMS
 
-**Port conflict:**  
-Edit `Properties/launchSettings.json` and change ports
+**Port already in use?**
+- Edit Properties/launchSettings.json and change the port numbers
 
 ---
 
-## Technologies
-
-- ASP.NET Core MVC 8.0
-- C# 12
-- SQL Server (ADO.NET)
-- ASP.NET Core Identity
-- Bootstrap 5 & jQuery
-- QuestPDF (invoices)
-- MailKit (emails)
-
----
-
-## Authors
+## Built By
 
 **Hadar & Ori**  
 Computer Communications & Networks Course  
@@ -174,19 +185,13 @@ Computer Communications & Networks Course
 
 ---
 
-## Quick Reference
+## Notes
 
-```bash
-# Run application
-dotnet run
-
-# Reset database
-# Run CompleteReset_Professional.sql in SSMS
-
-# Admin login
-admin@asapgetaway.com / Admin123!
-```
+- The SQL file creates demo data so you can test without manually adding trips
+- Admin panel is only visible when logged in as admin
+- Images are loaded from Unsplash
+- Email notifications require email service configuration in appsettings.json
 
 ---
 
-**Happy Traveling! ✈️🌍**
+**Enjoy! ✈️**
