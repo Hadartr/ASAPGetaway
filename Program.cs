@@ -19,6 +19,7 @@ builder.Services.AddScoped<ReviewsDAL>();
 builder.Services.AddScoped<SiteReviewsDAL>();
 
 // Register application services
+builder.Services.AddScoped<IPasswordHasher<IdentityUser>, Sha256PasswordHasher>();
 builder.Services.AddScoped<ASAPGetaway.Services.EmailService>();
 builder.Services.AddHostedService<TripReminderService>(); // Background service for trip reminders
 
