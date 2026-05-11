@@ -17,6 +17,7 @@ builder.Services.AddScoped<WaitingListDAL>();
 builder.Services.AddScoped<WishListDAL>();
 builder.Services.AddScoped<ReviewsDAL>();
 builder.Services.AddScoped<SiteReviewsDAL>();
+builder.Services.AddScoped<CreditCardsDAL>();
 
 // Register application services
 builder.Services.AddScoped<IPasswordHasher<IdentityUser>, Sha256PasswordHasher>();

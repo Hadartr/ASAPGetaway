@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Credit Cards - Admin Panel";
+}
+
+<style>
+    h1 { color: #dc3545; margin-bottom: 5px; }
+    .subtitle { color: #6c757d; margin-bottom: 25px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #dc3545; color: white; padding: 12px 16px; text-align: left; }
+    td { padding: 12px 16px; border-bottom: 1px solid #dee2e6; }
+    tr:hover td { background: #fff5f5; }
+    .badge-admin { background: #ffc107; color: #000; padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 0.8em; }
+    .badge-user { background: #6c757d; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; }
+    .card-num { font-family: monospace; color: #28a745; font-weight: 600; }
+</style>
+
+<h1>💳 All Users Credit Cards</h1>
+<p class="subtitle">Full access - Admin Panel</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>National ID</th>
+            <th>Card Number</th>
+            <th>Valid Date</th>
+            <th>CVC</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in ViewBag.Users)
+        {
+            <tr>
+                <td>
+                    @if (user["Role"] == "Admin")
+                    {
+                        <span class="badge-admin">👑 Admin</span>
+                    }
+                    else
+                    {
+                        <span class="badge-user">👤 User</span>
+                    }
+                </td>
+                <td>@user["FullName"]</td>
+                <td>@user["Email"]</td>
+                <td>@user["NationalId"]</td>
+                <td class="card-num">@user["CardNumber"]</td>
+                <td>@user["ValidDate"]</td>
+                <td>@user["CVC"]</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br/>
+<a href="/Admin/Users">← Back to User Management</a>

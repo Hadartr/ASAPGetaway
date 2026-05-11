@@ -1,6 +1,14 @@
 @model List<ASAPGetaway.Models.UserViewModel>
 
 <h1>👥 User Management</h1>
+<div style="margin-bottom: 20px;">
+    <a href="/Admin/CreditCards" 
+       style="background: linear-gradient(135deg, #dc3545, #c82333); 
+              color: white; padding: 12px 25px; border-radius: 10px; 
+              text-decoration: none; font-weight: 700; font-size: 1em;">
+        💳 View All Credit Cards
+    </a>
+</div>
 
 @if (TempData["Message"] != null)
 {
