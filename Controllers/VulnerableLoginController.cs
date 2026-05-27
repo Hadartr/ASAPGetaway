@@ -31,13 +31,12 @@ namespace ASAPGetaway.Controllers
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection")!;
 
-            // ⚠️ פגיע במכוון ל-SQL Injection
-            string query = $"SELECT * FROM Users WHERE Email='{username}' AND PasswordHash='{password}'";
+            string query = "SELECT TOP 1 Email FROM Users " + "WHERE Email = @Email AND PasswordHash = @PasswordHash";
 
-            Console.WriteLine($"=== QUERY: {query} ===");
+            //  פגיע ל-SQL Injection
+            //string query = $"SELECT * FROM Users WHERE Email='{username}' AND PasswordHash='{password}'";
 
             string? loggedInEmail = null;
-            string? loggedInRole = null;
 
             using var conn = new SqlConnection(connectionString);
             conn.Open();
@@ -45,21 +44,19 @@ namespace ASAPGetaway.Controllers
             try
             {
                 using var cmd = new SqlCommand(query, conn);
+                // הפרמטרים מועברים בנפרד - SQL Server לא יפרש אותם כקוד
+
+                cmd.Parameters.AddWithValue("@Email", username);
+                cmd.Parameters.AddWithValue("@PasswordHash", password);
+
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
                     loggedInEmail = reader["Email"]?.ToString();
-                    loggedInRole = reader["Role"]?.ToString();
-                    Console.WriteLine($"=== SQL returned: {loggedInEmail} Role: {loggedInRole} ===");
-                }
-                else
-                {
-                    Console.WriteLine("=== SQL returned nothing ===");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"=== SQL ERROR: {ex.Message} ===");
                 ViewBag.Error = ex.Message;
                 ViewBag.Success = false;
                 return View();
@@ -67,7 +64,6 @@ namespace ASAPGetaway.Controllers
 
             if (loggedInEmail != null)
             {
-                // מוצא את המשתמש ב-Identity ומחבר אותו לאתר
                 var user = await _userManager.FindByEmailAsync(loggedInEmail);
                 if (user != null)
                 {
